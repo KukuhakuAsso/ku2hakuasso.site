@@ -1,0 +1,8 @@
+[submodule "vue-mistarg2anns"]
+	path = vue-mistarg2anns
+	url = ../mistarg2anns.git
+	branch = main
+[submodule "vue-TelemetryInstruments"]
+	path = vue-TelemetryInstruments
+	url = ../telemetry-instruments.git
+	branch = main
