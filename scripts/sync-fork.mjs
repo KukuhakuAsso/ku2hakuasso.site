@@ -4,6 +4,7 @@
 //   --yes             跳过询问，直接创建所有缺失的 fork 仓库
 //   --no-submodules   不检查/不创建子模块 fork
 //   --no-sync         只处理仓库创建，不执行 pull / submodule update
+//   --no-create       不创建任何 fork，可在无 PAT 时运行同步部分
 //   --store-token     将创建仓库用的专用 PAT 存入 Windows 凭据管理器后退出
 // 创建仓库使用最小权限 PAT（repo 权限即可，建议设置到期时间），存放在 Windows 凭据管理器中
 // 静默读取；不使用 VS Code 登录会话、不打印凭据。也兼容 GITHUB_TOKEN / GH_TOKEN 环境变量、
@@ -18,6 +19,7 @@ const args = process.argv.slice(2);
 const AUTO = args.includes('--yes') || args.includes('-y');
 const NO_SUBS = args.includes('--no-submodules');
 const NO_SYNC = args.includes('--no-sync');
+const NO_CREATE = args.includes('--no-create');
 const STORE_TOKEN = args.includes('--store-token');
 
 if (args.includes('--help') || args.includes('-h')) {
@@ -25,6 +27,7 @@ if (args.includes('--help') || args.includes('-h')) {
     console.log('  --yes             跳过询问，直接创建所有缺失的 fork 仓库');
     console.log('  --no-submodules   不检查/不创建子模块 fork');
     console.log('  --no-sync         只处理仓库创建，不执行 pull / submodule update');
+    console.log('  --no-create       不创建任何 fork，可在无 PAT 时运行同步部分');
     console.log('  --store-token     将创建仓库用的专用 PAT 存入 Windows 凭据管理器后退出');
     process.exit(0);
 }
@@ -35,7 +38,7 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // ---------- 交互 ----------
 /** 基于 readline 构建询问工具；仅在真正需要交互时创建（避免 import 时占用 stdin） */
-function makePrompt(rl) {
+export function makePrompt(rl) {
     let closed = false;
     rl.on('close', () => { closed = true; });
     const input = (question) => new Promise((resolve) => {
@@ -70,7 +73,7 @@ function gitRemoteExists(owner, repo) {
     }
 }
 
-async function api(apiPath, { method = 'GET', token, body } = {}) {
+export async function api(apiPath, { method = 'GET', token, body } = {}) {
     return fetch(`https://api.github.com${apiPath}`, {
         method,
         headers: {
@@ -153,7 +156,7 @@ function storeCredential(token) {
     });
 }
 
-async function resolveToken(input, ask) {
+export async function resolveToken(input, ask) {
     const fromEnv = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
     if (fromEnv) return fromEnv;
     try {
@@ -264,7 +267,7 @@ async function runSync({ input, ask }) {
 
     // 1. 主仓库 fork 不存在时询问创建
     if (!gitRemoteExists(origin.owner, origin.repo)) {
-        const create = AUTO || await ask(`GitHub 上不存在 ${origin.owner}/${origin.repo}，是否创建 fork？`, false);
+        const create = !NO_CREATE && (AUTO || await ask(`GitHub 上不存在 ${origin.owner}/${origin.repo}，是否创建 fork？`, false));
         if (create) {
             try {
                 await ensureToken();
@@ -288,7 +291,7 @@ async function runSync({ input, ask }) {
             .map((sub) => ({ ...sub, fork: { owner: origin.owner, repo: sub.upstream.repo } }));
         if (missing.length > 0) {
             const list = missing.map((m) => `    ${m.fork.owner}/${m.fork.repo}  ←  ${m.upstream.owner}/${m.upstream.repo}`).join('\n');
-            const create = AUTO || await ask(`GitHub 上缺少以下子仓库 fork，是否创建？\n${list}\n`, false);
+            const create = !NO_CREATE && (AUTO || await ask(`GitHub 上缺少以下子仓库 fork，是否创建？\n${list}\n`, false));
             if (create) {
                 try {
                     await ensureToken();
@@ -321,6 +324,8 @@ async function runSync({ input, ask }) {
     // 4. 同步 upstream 远程地址（主仓库与各子模块）
     ensureUpstream('.', upstream);
     for (const sub of subs) ensureUpstream(sub.path, sub.upstream);
+    run('git', ['config', '--local', 'ku2hakuasso.last-submodule-sync', new Date().toISOString()]);
+    console.log('✔ 已记录同步状态；之后可执行 pnpm run fork:pr 提交 PR');
 }
 
 /** --store-token：交互输入 PAT 并存入 Windows 凭据管理器 */
