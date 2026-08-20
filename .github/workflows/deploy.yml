@@ -83,6 +83,9 @@ jobs:
                   token: ${{ secrets.GITHUB_TOKEN }} # 无需配置，GitHub 自动生成
 
             # 暂时跳过 webhook，dist 分支仍由上一步正常更新
+            # - name: Trigger hook
+            #   run: |
+            #       curl -k -s -X POST "${{ secrets.HOOK_URL }}" > /dev/null 2>&1
 
     # 3. 部署 GitHub Pages 跳转页（.github/page）
     # 仅 upstream 仓库执行，fork 不部署 Pages（fork 未启用 Pages 会导致 configure-pages 报
