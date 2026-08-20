@@ -73,15 +73,15 @@ pnpm install
 
 ## 构建方法
 
-| 命令                    | 说明                                            |
-| ----------------------- | ----------------------------------------------- |
-| `pnpm run dev`        | 并发启动主站与所有子项目的开发服务器            |
-| `pnpm run proj:dev`   | 单独启动某个子项目的开发服务器（交互式选择）    |
-| `pnpm run docs:dev`   | 仅启动 VitePress 主站开发服务器                 |
-| `pnpm run build`      | 构建主站与所有子项目，并合并到`dist-preview/` |
-| `pnpm run docs:build` | 仅构建 VitePress 主站                           |
-| `pnpm run preview`    | 本地预览`dist-preview/` 构建产物              |
-| `pnpm run preview:upstream` | 拉取 `upstream/dist` 构建产物到`dist-preview/` 并本地预览 |
+| 命令                          | 说明                                                         |
+| ----------------------------- | ------------------------------------------------------------ |
+| `pnpm run dev`              | 并发启动主站与所有子项目的开发服务器                         |
+| `pnpm run proj:dev`         | 单独启动某个子项目的开发服务器（交互式选择）                 |
+| `pnpm run docs:dev`         | 仅启动 VitePress 主站开发服务器                              |
+| `pnpm run build`            | 构建主站与所有子项目，并合并到`dist-preview/`              |
+| `pnpm run docs:build`       | 仅构建 VitePress 主站                                        |
+| `pnpm run preview`          | 本地预览`dist-preview/` 构建产物                           |
+| `pnpm run preview:upstream` | 拉取`upstream/dist` 构建产物到`dist-preview/` 并本地预览 |
 
 构建时，脚本会根据 `projects.json` 中的 `buildCmd` 字段执行子项目构建；若该命令失败，则回退到默认命令 `pnpm run build`。
 
@@ -89,13 +89,13 @@ pnpm install
 
 ## 代码检查与 CI
 
-| 命令                          | 说明                                              |
-| ----------------------------- | ------------------------------------------------- |
-| `pnpm run lint`             | ESLint + markdownlint 静态检查                     |
-| `pnpm run check:projects`   | 检测 `projects.json` 中端口/子路径/代理前缀的冲突 |
-| `pnpm run check:links`      | 检查 markdown 中失效的链接与资源                   |
-| `pnpm run test`             | 运行所有子项目的单元测试（Node 内置测试运行器）     |
-| `pnpm run clean`            | 清理本地临时构建文件；`--all` 连 `dist-preview/` 一并删除 |
+| 命令                        | 说明                                                          |
+| --------------------------- | ------------------------------------------------------------- |
+| `pnpm run lint`           | ESLint + markdownlint 静态检查                                |
+| `pnpm run check:projects` | 检测`projects.json` 中端口/子路径/代理前缀的冲突            |
+| `pnpm run check:links`    | 检查 markdown 中失效的链接与资源                              |
+| `pnpm run test`           | 运行所有子项目的单元测试（Node 内置测试运行器）               |
+| `pnpm run clean`          | 清理本地临时构建文件；`--all` 连 `dist-preview/` 一并删除 |
 
 - 子项目测试位于各子项目的 `tests/` 目录，`node --test` 会自动发现 `*.test.js`；
 - `pnpm run clean -- --dry` 可预览清理项，不真正删除。
@@ -110,11 +110,25 @@ pnpm run submodules:update
 
 该命令会更新子模块指针、刷新根 `pnpm-lock.yaml`，并在有变化时创建本地提交。主仓库的定时 workflow 会检查子模块更新，完成安装和构建验证后创建 PR。
 
-fork 主仓库后，先配置 `upstream`，并确保两个同名子仓库也已 fork，再执行：
+fork 主仓库后，先配置 `upstream`，再执行：
 
 ```bash
 pnpm run fork:sync
 ```
+
+该命令会先检查 GitHub 上是否存在对应的主 fork 与同名子仓库 fork，缺少时询问是否创建；结束后会保证主仓库与各子模块的 `upstream` 远程地址正确。
+
+创建仓库使用最小权限 PAT（`repo` 权限即可，建议设置到期时间），存放在 Windows 凭据管理器中静默读取；
+
+```bash
+pnpm run fork:token   # 把 PAT 存入 Windows 凭据管理器
+pnpm run fork:sync
+```
+
+- `--yes`：跳过询问，直接创建所有缺失的 fork；
+- `--no-submodules`：跳过子仓库 fork 的检查与创建；
+- `--no-sync`：只处理仓库创建，不执行 pull / submodule update；
+- 也兼容 `GITHUB_TOKEN` / `GH_TOKEN` 环境变量与已登录的 gh CLI。
 
 ### CI（GitHub Actions）
 

@@ -28,7 +28,8 @@
         "check:projects": "node scripts/check-projects.mjs",
         "check:links": "node scripts/check-links.mjs",
         "submodules:update": "node scripts/update-submodules.mjs",
-        "fork:sync": "node scripts/sync-fork.mjs"
+        "fork:sync": "node scripts/sync-fork.mjs",
+        "fork:token": "node scripts/sync-fork.mjs --store-token"
     },
     "baseUrl": "https://www.ku2hakuasso.site",
     "repository": {
