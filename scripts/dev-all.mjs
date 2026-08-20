@@ -4,6 +4,7 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { spawnOptions, killTree } from "./proc-utils.mjs";
+import { ensureProjectsReady } from "./submodule-guard.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, "..");
@@ -11,6 +12,19 @@ const ROOT_DIR = path.resolve(__dirname, "..");
 const projectTable = JSON.parse(
     fs.readFileSync(path.resolve(ROOT_DIR, "projects.json"), "utf-8"),
 );
+
+// ===== 子模块未初始化检测 =====
+// 未初始化（gitlink 未 checkout）的子模块目录不存在，直接 spawn 会因
+// 找不到工作目录而报错；这里先检测并询问是否初始化，选择「否」的子项目不拉起。
+// 旗标：--yes / -y 直接初始化；--no-init 直接跳过。
+const argv = process.argv.slice(2);
+const autoInit = argv.includes("--yes") || argv.includes("-y");
+const skipInit = argv.includes("--no-init");
+
+const { ready, skipped } = await ensureProjectsReady(projectTable, {
+    autoInit,
+    skipInit,
+});
 
 console.log("🚀 正在并发启动所有项目的开发服务器...\n");
 
@@ -23,8 +37,8 @@ const docsServer = spawn("pnpm", ["vitepress", "dev", "docs"], {
 });
 runningProcesses.push(docsServer);
 
-// 2. 自动遍历 JSON 表，启动所有子项目
-for (const project of projectTable) {
+// 2. 自动遍历 JSON 表，启动所有已就绪的子项目
+for (const project of ready) {
     console.log(
         `🔗 正在拉起子项目开发服务器: ${project.name} (端口预测: ${project.devPort})`,
     );
@@ -33,6 +47,18 @@ for (const project of projectTable) {
         cwd: path.resolve(ROOT_DIR, project.dir),
     });
     runningProcesses.push(subServer);
+}
+
+// 提示被跳过的未初始化子模块
+if (skipped.length) {
+    console.log(
+        `\nℹ️  已跳过 ${skipped.length} 个未初始化子项目（${skipped
+            .map((p) => p.name)
+            .join(", ")}），其开发服务器未启动。`,
+    );
+    console.log(
+        "   需要时执行 git submodule update --init，或使用 pnpm run dev -- --yes 自动初始化。",
+    );
 }
 
 // 防抖标志，防止疯狂按 Ctrl+C 导致重复执行

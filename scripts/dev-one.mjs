@@ -12,6 +12,7 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { spawnOptions, killTree } from "./proc-utils.mjs";
+import { ensureProjectsReady } from "./submodule-guard.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, "..");
@@ -107,8 +108,11 @@ function arrowSelect(options, displayFn) {
 }
 // ========== 菜单结束 ==========
 
-// 读取命令行参数
-let targetName = process.argv[2];
+// 读取命令行参数（--yes / -y / --no-init 为旗标，其余第一个参数视为项目名）
+const argv = process.argv.slice(2);
+const autoInit = argv.includes("--yes") || argv.includes("-y");
+const skipInit = argv.includes("--no-init");
+let targetName = argv.find((a) => !a.startsWith("-"));
 
 // 如果没有提供项目名，交互式选择
 if (!targetName) {
@@ -137,6 +141,21 @@ if (!project) {
     console.log(`❌ 未找到项目 "${targetName}"。`);
     console.log(`📋 可用项目: ${projectTable.map((p) => p.name).join(", ")}`);
     process.exit(1);
+}
+
+// ===== 子模块未初始化检测 =====
+// 目标子模块未初始化（gitlink 未 checkout）时，询问是否初始化；
+// 选择「否」则直接退出，避免在缺失目录上 spawn 报错。
+const { ready: readyProjects } = await ensureProjectsReady([project], {
+    autoInit,
+    skipInit,
+});
+if (readyProjects.length === 0) {
+    console.log(`⏭️  子模块 ${project.dir} 未初始化，已取消启动。`);
+    console.log(
+        "   需要时执行 git submodule update --init，或使用 pnpm run proj:dev -- <项目名> --yes 自动初始化。",
+    );
+    process.exit(0);
 }
 
 console.log(`🚀 正在启动子项目开发服务器: ${project.name} (端口: ${project.devPort})\n`);
