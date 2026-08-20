@@ -1,0 +1,1 @@
+import{H as e,V as t,et as n,j as r}from"./chunks/framework.BY5yoHkb.js";var i=JSON.parse(`{"title":"关于我们","description":"","frontmatter":{"title":"关于我们"},"headers":[],"relativePath":"about.md","filePath":"about.md"}`),a={name:`about.md`};function o(r,i,a,o,s,c){return n(),t(`div`,null,[...i[0]||=[e("",9)]])}var s=r(a,[[`render`,o]]);export{i as __pageData,s as default};
