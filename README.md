@@ -83,6 +83,11 @@ pnpm install
 | `pnpm run preview`          | 本地预览`dist-preview/` 构建产物                           |
 | `pnpm run preview:upstream` | 拉取`upstream/dist` 构建产物到`dist-preview/` 并本地预览 |
 
+> `dev` / `proj:dev` / `build` 启动前会自动检测 `projects.json` 中未初始化的 Git 子模块（`git submodule status` 显示 `-` 前缀或目录缺失）：交互环境下逐项询问是否执行 `git submodule update --init`，选择「否」的子项目会被跳过、不会拉起或构建（主站不受影响）；非交互环境（如 CI）默认跳过并告警。
+>
+> - `pnpm run dev -- --yes`：检测到未初始化时直接初始化，不再询问；
+> - `pnpm run dev -- --no-init`：直接跳过，不再询问（`build` / `proj:dev` 同样支持这两个旗标）。
+
 构建时，脚本会根据 `projects.json` 中的 `buildCmd` 字段执行子项目构建；若该命令失败，则回退到默认命令 `pnpm run build`。
 
 > `preview:upstream` 用于预览上游（`upstream/dist` 分支）已部署的构建产物：脚本会 `git fetch upstream dist`，在临时目录创建该分支的 worktree，将其内容拷贝到 `dist-preview/` 后启动 `vite preview`，退出时自动清理临时 worktree。适用于在本地核对 CVM 上拉取到的实际部署内容。

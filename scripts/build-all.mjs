@@ -3,6 +3,7 @@ import { execSync } from "child_process";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { ensureProjectsReady } from "./submodule-guard.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, "..");
@@ -14,6 +15,19 @@ const projectTable = JSON.parse(
 
 // ✨ 优化：直接将预览总目录生成在项目根目录下，方便管理
 const DIST_PREVIEW = path.resolve(ROOT_DIR, "dist-preview");
+
+// ===== 子模块未初始化检测 =====
+// 未初始化（gitlink 未 checkout）的子模块目录不存在，构建会直接报错；
+// 这里先检测并询问是否初始化，选择「否」的子项目不构建、不合并产物。
+// 旗标：--yes / -y 直接初始化；--no-init 直接跳过。
+const argv = process.argv.slice(2);
+const autoInit = argv.includes("--yes") || argv.includes("-y");
+const skipInit = argv.includes("--no-init");
+
+const { ready, skipped } = await ensureProjectsReady(projectTable, {
+    autoInit,
+    skipInit,
+});
 
 try {
     // 1. 清理并创建测试总目录
@@ -32,8 +46,8 @@ try {
     const vitepressDist = path.resolve(ROOT_DIR, "docs/.vitepress/dist");
     fs.cpSync(vitepressDist, DIST_PREVIEW, { recursive: true });
 
-    // 3. 动态遍历构建表中的子项目
-    for (const project of projectTable) {
+    // 3. 动态遍历构建表中的已就绪子项目
+    for (const project of ready) {
         console.log(`\n🚀 发现子项目 [${project.name}]，开始构建...`);
 
         // ✨ 优化：计算出子项目的绝对路径
@@ -79,6 +93,18 @@ try {
     console.log(
         "\n✨ 所有项目构建并合并成功！产物位于项目根目录的 /dist-preview",
     );
+
+    // 提示被跳过的未初始化子模块
+    if (skipped.length) {
+        console.log(
+            `ℹ️  已跳过 ${skipped.length} 个未初始化子项目（${skipped
+                .map((p) => p.name)
+                .join(", ")}），其产物未包含在 dist-preview 中。`,
+        );
+        console.log(
+            "   需要时执行 git submodule update --init，或使用 pnpm run build -- --yes 自动初始化。",
+        );
+    }
 } catch (error) {
     console.error("\n❌ 构建失败:", error);
     process.exit(1);
