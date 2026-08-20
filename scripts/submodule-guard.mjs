@@ -3,6 +3,8 @@
 // 避免子模块未初始化（gitlink 未 checkout）时启动或构建报错（如 ENOENT）。
 // 检测到未初始化的子模块时，默认逐项询问是否执行 git submodule update --init；
 // 选择「否」或初始化失败的项目会被跳过，不再拉起。
+// 初始化成功后会在根目录执行一次 pnpm install（新子模块目录在 pnpm 解析
+// workspace 时还不存在，必须重新安装依赖）；安装失败的新子模块同样会被跳过。
 //
 // 使用方式：
 //   import { ensureProjectsReady } from "./submodule-guard.mjs";
@@ -68,6 +70,23 @@ export function initSubmodule(project) {
     console.log(`✔ 子模块 ${dir} 初始化完成`);
 }
 
+/**
+ * 在根目录执行 pnpm install。
+ * 刚初始化的子模块目录在 pnpm 解析 workspace 时还不存在，其依赖不会被安装；
+ * 不重新安装会导致 vite 找不到 @vitejs/plugin-vue 等包而启动失败。
+ * 命令为固定字符串、无用户输入，用 shell: true 以兼容 Windows 的 pnpm.cmd；
+ * 不传 args 数组，避免触发 Node DEP0190 弃用告警。
+ */
+export function installDependencies() {
+    console.log("📦 正在安装依赖（pnpm install）...");
+    execFileSync("pnpm install", {
+        cwd: ROOT_DIR,
+        stdio: "inherit",
+        shell: true,
+    });
+    console.log("✔ 依赖安装完成");
+}
+
 /** 交互式 y/N 询问；非 TTY 环境（如 CI）直接返回默认值 */
 export function askYesNo(question, def = false) {
     return new Promise((resolve) => {
@@ -122,6 +141,7 @@ export async function ensureProjectsReady(projects, options = {}) {
 
     const ready = [];
     const skipped = [];
+    const initialized = [];
     for (const project of projects) {
         if (!uninitializedMap.get(project)) {
             ready.push(project);
@@ -139,6 +159,7 @@ export async function ensureProjectsReady(projects, options = {}) {
             try {
                 initSubmodule(project);
                 ready.push(project);
+                initialized.push(project);
             } catch (err) {
                 console.error(
                     `❌ 子模块 ${project.dir} 初始化失败：${err.message}`,
@@ -153,6 +174,26 @@ export async function ensureProjectsReady(projects, options = {}) {
                 `⏭️  跳过未初始化的子项目 ${project.name}（${project.dir}）`,
             );
             skipped.push(project);
+        }
+    }
+
+    // 本次运行新初始化的子模块需要重新安装依赖（pnpm 解析 workspace
+    // 时这些目录还不存在）；安装失败则跳过它们，避免启动/构建报出难懂的错误。
+    if (initialized.length) {
+        try {
+            installDependencies();
+        } catch (err) {
+            console.error(`❌ 依赖安装失败（pnpm install）：${err.message}`);
+            console.error(
+                "   新初始化的子模块缺少 node_modules，请手动执行 pnpm install 后重试。",
+            );
+            for (const project of initialized) {
+                const index = ready.indexOf(project);
+                if (index !== -1) {
+                    ready.splice(index, 1);
+                    skipped.push(project);
+                }
+            }
         }
     }
 
