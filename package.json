@@ -20,6 +20,7 @@
         "new:project": "node scripts/create-project.mjs",
         "build": "node scripts/build-all.mjs",
         "preview": "vite preview --outDir dist-preview",
+        "preview:upstream": "node scripts/preview-upstream.mjs",
         "clean": "node scripts/clean.mjs",
         "lint": "pnpm run lint:md && pnpm run lint:js",
         "lint:md": "markdownlint-cli2",

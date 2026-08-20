@@ -81,8 +81,11 @@ pnpm install
 | `pnpm run build`      | 构建主站与所有子项目，并合并到`dist-preview/` |
 | `pnpm run docs:build` | 仅构建 VitePress 主站                           |
 | `pnpm run preview`    | 本地预览`dist-preview/` 构建产物              |
+| `pnpm run preview:upstream` | 拉取 `upstream/dist` 构建产物到`dist-preview/` 并本地预览 |
 
 构建时，脚本会根据 `projects.json` 中的 `buildCmd` 字段执行子项目构建；若该命令失败，则回退到默认命令 `pnpm run build`。
+
+> `preview:upstream` 用于预览上游（`upstream/dist` 分支）已部署的构建产物：脚本会 `git fetch upstream dist`，在临时目录创建该分支的 worktree，将其内容拷贝到 `dist-preview/` 后启动 `vite preview`，退出时自动清理临时 worktree。适用于在本地核对 CVM 上拉取到的实际部署内容。
 
 ## 代码检查与 CI
 
