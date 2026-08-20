@@ -123,37 +123,75 @@ pnpm run fork:sync
 
 ## 新增vite子项目
 
+新增子项目必须以 **Git 子模块**方式接入：先在远程（如 GitHub）创建好独立的空仓库，再通过脚手架生成独立仓库并挂载为子模块，**不允许直接在主仓库内创建项目目录**（本地临时开发除外，见下方 `--local`）。
+
 `projects.json` 是子项目的唯一注册点，主站配置、构建与开发脚本都会自动读取它，无需手动同步。
 
-使用脚手架命令一键创建：
+### 正式接入（子模块）
+
+使用脚手架命令一键完成（生成独立仓库 → 推送远程 → 添加子模块 → 注册）：
 
 ```bash
-pnpm run new:project <项目名> [--dir 目录] [--port 端口] [--subpath 子路径] [--proxy 代理前缀,可使用多项]
+pnpm run new:project <项目名> --url <远程仓库URL> [--dir 目录] [--port 端口] [--subpath 子路径] [--proxy 代理前缀,可使用多项]
 ```
 
 示例：
 
 ```bash
-pnpm run new:project MyGame --subpath MyGame --proxy api-demo
+pnpm run new:project MyGame --url git@github.com:KukuhakuAsso/mygame.git --subpath MyGame --proxy api-demo
 ```
+
+> 执行前请先在远程创建好**空的独立仓库**（建议放在与主仓库相同的账号/组织下，便于使用相对 URL），并确保本机有该仓库的推送权限。
 
 该命令会自动完成：
 
-1. 生成子项目模板（`package.json`、`vite.config.js`、`index.html`、`src/` 等）；
-2. 注册到 `projects.json`（端口默认取现有最大端口 + 1）；
-3. 注册到 `pnpm-workspace.yaml`。
+1. 在临时目录生成子项目模板（`package.json`、`vite.config.js`、`index.html`、`src/` 等），初始化 git 并推送到 `--url` 指定的远程仓库；
+2. 在主仓库执行 `git submodule add`，将该远程仓库挂载为子模块；
+3. 注册到 `projects.json`（端口默认取现有最大端口 + 1）；
+4. 注册到 `pnpm-workspace.yaml`。
 
 创建后执行：
 
 ```bash
+git add .gitmodules projects.json pnpm-workspace.yaml
+git commit -m "chore: add subproject MyGame"
 pnpm install    # 安装新子项目的依赖
 pnpm run dev    # 主站与所有子项目一起启动
 ```
 
+### 本地临时子模块（--local）
+
+仅用于本地开发/预览，在本地生成独立仓库并挂载为子模块，**不推送远程、不要求远程仓库存在**：
+
+```bash
+pnpm run new:project <项目名> --local [--url 仓库URL] [--dir 目录] [--port 端口] [--subpath 子路径] [--proxy 代理前缀,可使用多项]
+```
+
+示例：
+
+```bash
+pnpm run new:project MyGame --local --subpath MyGame
+```
+
+该命令会自动完成：
+
+1. 在临时目录生成独立仓库模板并提交本地 commit；
+2. 用本地路径执行 `git submodule add`，将该仓库挂载为子模块；
+3. 将 `.gitmodules` 中的 url 改写为 `--url`（缺省为 `../<项目名>.git`）；
+4. 注册到 `projects.json` 与 `pnpm-workspace.yaml`。
+
+注意事项：
+
+- 子模块仅存在于本地，`--url` 可以指向尚不存在的远程仓库，正式接入时只需在子模块目录推送即可；
+- 注册逻辑（`projects.json` / `pnpm-workspace.yaml`）与正式模式一致，`pnpm install` + `pnpm run dev` 即可本地联调；
+- 若需删除，直接移除目录并从 `projects.json` / `pnpm-workspace.yaml` / `.gitmodules` 中清理对应条目。
+
 说明：
 
+- 若 `--url` 使用相对 URL（如 `../mygame.git`），`git submodule add` 会基于主仓库的远程地址自动解析，fork 主仓库前必须先在同一账号或组织下 fork 同名子仓库；
 - 子项目的 `vite.config.js` 会自动从 `projects.json` 读取 `base`、`port`、`proxyApi`、`outputDir`，无需手动配置；
 - 代理目标通过子项目内的 `.env.development` 配置（模板中为 `API_PROXY_TARGET` / `API_PROXY_REWRITE`）；
+- 子模块内部更新后，在主仓库执行 `pnpm run submodules:update` 同步子模块指针（见上文「子模块同步」）。
 
 `projects.json` 字段说明：
 
