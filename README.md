@@ -7,7 +7,7 @@
 
 ## 项目构成
 
-本项目是 pnpm monorepo，包含一个 VitePress 主站与一个 Vue 子项目。
+本项目是 pnpm monorepo，包含一个 VitePress 主站与两个 Git 子模块项目。
 
 ### 主站（docs/）
 
@@ -27,6 +27,13 @@
 ### 子项目（vue-TelemetryInstruments/）
 
 Puzzle解谜游戏「TelemetryInstruments」，Vue 3 + Vite 构建的单页应用，部署在 `/TelemetryInstruments/` 子路径下。
+
+### 子项目（vue-mistarg2anns/）
+
+谜题游戏「mistarg2anns」，Vue 3 + Vite 构建的单页应用，部署在 `/mistarg/2anns/` 子路径下。
+
+这两个目录是独立仓库的 Git 子模块。使用相对 URL 时，fork 主仓库前必须先在同一账号或组织下 fork 同名的
+`mistarg2anns` 与 `telemetry-instruments` 仓库，否则执行 `git submodule update --init --recursive` 会因仓库不存在而失败。
 
 ## 技术栈
 
@@ -51,8 +58,8 @@ Puzzle解谜游戏「TelemetryInstruments」，Vue 3 + Vite 构建的单页应�
 │   ├── posts/                 # 文章正文
 │   ├── puzzles/ lore/ tools/  # 各栏目索引页
 │   └── public/                # 静态资源（图片、PDF 等）
-├── vue-TelemetryInstruments/  # 子项目：解谜 SPA
-│   └── tests/                 # 子项目单元测试
+├── vue-TelemetryInstruments/  # 子模块：解谜 SPA
+├── vue-mistarg2anns/          # 子模块：谜题游戏
 ├── scripts/                   # 构建与开发编排脚本
 ├── projects.json              # 子项目构建配置表
 └── dist-preview/              # 构建产物（已 gitignore）
@@ -89,6 +96,22 @@ pnpm install
 
 - 子项目测试位于各子项目的 `tests/` 目录，`node --test` 会自动发现 `*.test.js`；
 - `pnpm run clean -- --dry` 可预览清理项，不真正删除。
+
+### 子模块同步
+
+更新子项目后，在子模块目录提交并推送，再在主仓库执行：
+
+```bash
+pnpm run submodules:update
+```
+
+该命令会更新子模块指针、刷新根 `pnpm-lock.yaml`，并在有变化时创建本地提交。主仓库的定时 workflow 会检查子模块更新，完成安装和构建验证后创建 PR。
+
+fork 主仓库后，先配置 `upstream`，并确保两个同名子仓库也已 fork，再执行：
+
+```bash
+pnpm run fork:sync
+```
 
 ### CI（GitHub Actions）
 

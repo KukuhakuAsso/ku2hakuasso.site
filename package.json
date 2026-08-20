@@ -25,21 +25,23 @@
         "lint:md": "markdownlint-cli2",
         "lint:js": "eslint .",
         "check:projects": "node scripts/check-projects.mjs",
-        "check:links": "node scripts/check-links.mjs"
+        "check:links": "node scripts/check-links.mjs",
+        "submodules:update": "node scripts/update-submodules.mjs",
+        "fork:sync": "node scripts/sync-fork.mjs"
     },
     "baseUrl": "https://www.ku2hakuasso.site",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/KukuhakuAsso/KukuhakuAsso.github.io.git"
+        "url": "git+https://github.com/KukuhakuAsso/ku2hakuasso.site.git"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "type": "commonjs",
     "bugs": {
-        "url": "https://github.com/KukuhakuAsso/KukuhakuAsso.github.io/issues"
+        "url": "https://github.com/KukuhakuAsso/ku2hakuasso.site/issues"
     },
-    "homepage": "https://github.com/KukuhakuAsso/KukuhakuAsso.github.io#readme",
+    "homepage": "https://github.com/KukuhakuAsso/ku2hakuasso.site#readme",
     "devDependencies": {
         "@eslint/js": "^10.0.1",
         "eslint": "^10.8.1",

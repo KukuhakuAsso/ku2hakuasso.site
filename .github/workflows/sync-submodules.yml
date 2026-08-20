@@ -1,0 +1,55 @@
+name: Sync submodules
+
+on:
+    schedule:
+        - cron: '0 0 * * *'
+    workflow_dispatch:
+
+permissions:
+    contents: write
+    pull-requests: write
+
+jobs:
+    sync:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v7
+              with:
+                  submodules: recursive
+                  fetch-depth: 0
+
+            - name: Install pnpm
+              uses: pnpm/action-setup@v6
+              with:
+                  version: 11
+
+            - name: Set up Node
+              uses: actions/setup-node@v7
+              with:
+                  node-version: 24
+                  cache: pnpm
+
+            - name: Update submodule pointers
+              run: git submodule update --remote --recursive
+
+            - name: Refresh lockfile
+              run: pnpm install
+
+            - name: Validate
+              run: pnpm install --frozen-lockfile && pnpm run build
+
+            - name: Create pull request
+              env:
+                  GH_TOKEN: ${{ github.token }}
+              run: |
+                  if git diff --quiet; then
+                    echo "No submodule updates available"
+                    exit 0
+                  fi
+                  branch="chore/sync-submodules-$(date -u +%Y%m%d)"
+                  git checkout -b "$branch"
+                  git add pnpm-lock.yaml vue-mistarg2anns vue-TelemetryInstruments
+                  git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'chore: sync submodules'
+                  git push --set-upstream origin "$branch"
+                  gh pr create --base main --head "$branch" --title 'chore: sync submodules' --body 'Automated submodule update with frozen install and build validation.'
