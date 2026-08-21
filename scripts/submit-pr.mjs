@@ -27,6 +27,7 @@ import {
     resolveToken,
     api,
 } from './sync-fork.mjs';
+import { isDirDisabled } from './local-config.mjs';
 
 const args = process.argv.slice(2);
 const HELP = args.includes('--help') || args.includes('-h');
@@ -152,13 +153,17 @@ async function runSubmit({ input, ask }) {
         throw new Error('未找到 origin/upstream 远程，请先 fork 主仓库并配置这两个远程');
     }
 
-    // 仓库清单：主仓库 + 各子模块
+    // 仓库清单：主仓库 + 各子模块（个人配置禁用的子模块跳过，见 scripts/local-config.mjs）
     const repos = [{ path: '.', label: '主仓库', origin, upstream }];
     if (!MAIN_ONLY) {
         let subs = [];
         try { subs = parseGitmodules(readFileSync('.gitmodules', 'utf8')); } catch { /* 无 .gitmodules */ }
         for (const s of subs) {
             try {
+                if (isDirDisabled(s.path)) {
+                    console.log(`⏭️  子模块 ${s.path} 已在个人配置（.repos.local.json）中禁用，跳过`);
+                    continue;
+                }
                 const subUpstream = resolveSubRepo(upstreamUrl, s.url);
                 const subOrigin = parseRemote(out(s.path, ['remote', 'get-url', 'origin']));
                 repos.push({ path: s.path, label: `子模块 ${s.path}`, origin: subOrigin, upstream: subUpstream });
