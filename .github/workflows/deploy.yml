@@ -82,6 +82,22 @@ jobs:
                   branch: dist # 专门存放打包后文件的分支（会自动创建）
                   token: ${{ secrets.GITHUB_TOKEN }} # 无需配置，GitHub 自动生成
 
+            # 把构建产物打包成压缩包，发布到固定 build-latest Release
+            - name: Pack site
+              run: tar -czf site.tar.gz -C dist-preview .
+
+            - name: Publish build release
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # gh CLI 不会自动使用 GITHUB_TOKEN，需显式指定
+              run: |
+                  gh release delete build-latest --yes --cleanup-tag || true
+                  gh release create build-latest site.tar.gz \
+                    --title "Latest site build" \
+                    --notes "自动构建产物，供 CVM 拉取" \
+                    --latest
+
+            # 通知 CVM：POST body 携带构建产物下载链接，宝塔 Webhook 会把它作为 $1 传给部署脚本
+            # 输出重定向保留，避免泄漏服务器配置等敏感信息
             - name: Trigger hook
               run: |
                   curl -k -s -X POST "${{ secrets.HOOK_URL }}" > /dev/null 2>&1
