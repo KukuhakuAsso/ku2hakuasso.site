@@ -8,7 +8,8 @@
         "devPort": 5175,
         "proxyApi": [
             "/api-scf"
-        ]
+        ],
+        "enabled": true
     },
     {
         "name": "mistarg2anns",
@@ -19,6 +20,7 @@
         "devPort": 5176,
         "proxyApi": [
             "/api-mist"
-        ]
+        ],
+        "enabled": true
     }
 ]
