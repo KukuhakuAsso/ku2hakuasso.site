@@ -21,6 +21,7 @@ export default [
             globals: {
                 console: "readonly",
                 process: "readonly",
+                Buffer: "readonly",
                 window: "readonly",
                 document: "readonly",
                 localStorage: "readonly",
