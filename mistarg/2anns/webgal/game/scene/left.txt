@@ -1,0 +1,4 @@
+setVar: quest=left - global;
+你选择了左路。;
+接下来进入谜题环节。;
+changeScene: puzzle.txt;

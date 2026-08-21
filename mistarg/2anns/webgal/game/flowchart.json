@@ -1,0 +1,183 @@
+{
+  "flowcharts": [
+    {
+      "id": "main",
+      "name": "WebGAL×Vue 集成测试流程",
+      "type": "main",
+      "nodes": [
+        {
+          "id": "start",
+          "type": "root",
+          "position": { "x": 250, "y": 0 },
+          "data": {
+            "label": "入口（跳转动态剧本服务）",
+            "sceneName": "start.txt",
+            "isRoot": true
+          }
+        },
+        {
+          "id": "entry",
+          "type": "chapter",
+          "position": { "x": 250, "y": 120 },
+          "data": {
+            "label": "开场（后端下发）",
+            "sceneName": "entry.txt"
+          }
+        },
+        {
+          "id": "left",
+          "type": "branch",
+          "position": { "x": 100, "y": 240 },
+          "data": {
+            "label": "走左路",
+            "sceneName": "left.txt"
+          }
+        },
+        {
+          "id": "right",
+          "type": "branch",
+          "position": { "x": 400, "y": 240 },
+          "data": {
+            "label": "走右路",
+            "sceneName": "right.txt"
+          }
+        },
+        {
+          "id": "puzzle",
+          "type": "chapter",
+          "position": { "x": 250, "y": 360 },
+          "data": {
+            "label": "谜题（getUserInput）",
+            "sceneName": "puzzle.txt"
+          }
+        },
+        {
+          "id": "ending",
+          "type": "chapter",
+          "position": { "x": 250, "y": 480 },
+          "data": {
+            "label": "结局闭环",
+            "sceneName": "ending.txt"
+          }
+        }
+      ],
+      "edges": [
+        { "id": "e-start-entry", "source": "start", "target": "entry" },
+        { "id": "e-entry-left", "source": "entry", "target": "left" },
+        { "id": "e-entry-right", "source": "entry", "target": "right" },
+        { "id": "e-left-puzzle", "source": "left", "target": "puzzle" },
+        { "id": "e-right-puzzle", "source": "right", "target": "puzzle" },
+        { "id": "e-puzzle-ending", "source": "puzzle", "target": "ending" }
+      ]
+    },
+    {
+      "id": "function-tests",
+      "name": "功能测试分支",
+      "type": "character",
+      "nodes": [
+        {
+          "id": "function_test",
+          "type": "root",
+          "position": { "x": 550, "y": 0 },
+          "data": {
+            "label": "功能测试入口",
+            "sceneName": "function_test.txt",
+            "isRoot": true
+          }
+        },
+        {
+          "id": "animation",
+          "type": "event",
+          "position": { "x": 0, "y": 120 },
+          "data": {
+            "label": "口型动画测试",
+            "sceneName": "demo_animation.txt"
+          }
+        },
+        {
+          "id": "var",
+          "type": "event",
+          "position": { "x": 220, "y": 120 },
+          "data": {
+            "label": "变量插值测试",
+            "sceneName": "demo_var.txt"
+          }
+        },
+        {
+          "id": "change_config",
+          "type": "event",
+          "position": { "x": 440, "y": 120 },
+          "data": {
+            "label": "配置修改测试",
+            "sceneName": "demo_changeConfig.txt"
+          }
+        },
+        {
+          "id": "performs",
+          "type": "event",
+          "position": { "x": 660, "y": 120 },
+          "data": {
+            "label": "Pixi 演出测试",
+            "sceneName": "demo_performs.txt"
+          }
+        },
+        {
+          "id": "flow_control",
+          "type": "branch",
+          "position": { "x": 880, "y": 120 },
+          "data": {
+            "label": "流程控制测试",
+            "sceneName": "demo_test_flow_control.txt"
+          }
+        },
+        {
+          "id": "variable_flow",
+          "type": "branch",
+          "position": { "x": 1100, "y": 120 },
+          "data": {
+            "label": "变量流程测试",
+            "sceneName": "demo_test_variable_flow_control.txt"
+          }
+        },
+        {
+          "id": "input_flow",
+          "type": "branch",
+          "position": { "x": 1320, "y": 120 },
+          "data": {
+            "label": "用户输入流程测试",
+            "sceneName": "demo_test_input_flow_control.txt"
+          }
+        },
+        {
+          "id": "dom_control",
+          "type": "event",
+          "position": { "x": 1540, "y": 120 },
+          "data": {
+            "label": "DOM 生命周期测试",
+            "sceneName": "demo_test_dom_control.txt"
+          }
+        },
+        {
+          "id": "flow_child",
+          "type": "event",
+          "position": { "x": 880, "y": 240 },
+          "data": {
+            "label": "callScene 子场景",
+            "sceneName": "demo_test_flow_control_child.txt"
+          }
+        }
+      ],
+      "edges": [
+        { "id": "e-function-animation", "source": "function_test", "target": "animation" },
+        { "id": "e-function-var", "source": "function_test", "target": "var" },
+        { "id": "e-function-change-config", "source": "function_test", "target": "change_config" },
+        { "id": "e-function-performs", "source": "function_test", "target": "performs" },
+        { "id": "e-function-flow-control", "source": "function_test", "target": "flow_control" },
+        { "id": "e-function-variable-flow", "source": "function_test", "target": "variable_flow" },
+        { "id": "e-function-input-flow", "source": "function_test", "target": "input_flow" },
+        { "id": "e-function-dom-control", "source": "function_test", "target": "dom_control" },
+        { "id": "e-flow-control-child", "source": "flow_control", "target": "flow_child" }
+      ]
+    }
+  ]
+}

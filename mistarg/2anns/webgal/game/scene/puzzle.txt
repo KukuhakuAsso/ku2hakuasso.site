@@ -1,0 +1,12 @@
+setVar: quest=puzzle_test - global;
+changeBg: bg.webp;
+请输入谜题答案。;
+提示：宇宙的终极答案（两位数字）。;
+getUserInput: answer -title=谜题 -buttonText=提交;
+jumpLabel: p_correct -when=answer=="42";
+答案不对，再想想。;
+jumpLabel: p_end;
+label: p_correct;
+答对了！;
+label: p_end;
+changeScene: ending.txt;
