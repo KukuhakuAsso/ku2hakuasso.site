@@ -33,3 +33,6 @@ tmp_scripts/
 
 # 7. 个人本地配置（选择性禁用部分仓库，见 scripts/local-config.mjs）
 .repos.local.json
+
+# 个人禁用仓库配置
+.repos.local.json
