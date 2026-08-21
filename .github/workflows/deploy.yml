@@ -59,7 +59,7 @@ jobs:
                   retention-days: 1
 
     # 2. 部署到 dist 分支（CVM 拉取模式）+ 触发钩子
-    # 仅 upstream 仓库执行，fork 不推送 dist 分支、不触发钩子
+    # 仅本仓库执行（旧 fork 工作流已弃用）
     deploy_dist:
         if: github.repository == 'KukuhakuAsso/ku2hakuasso.site'
         needs: build
@@ -88,8 +88,7 @@ jobs:
             #       curl -k -s -X POST "${{ secrets.HOOK_URL }}" > /dev/null 2>&1
 
     # 3. 部署 GitHub Pages 跳转页（.github/page）
-    # 仅 upstream 仓库执行，fork 不部署 Pages（fork 未启用 Pages 会导致 configure-pages 报
-    # "Get Pages site failed / Not Found"）
+    # 仅本仓库执行（旧 fork 工作流已弃用）
     deploy_pages:
         if: github.repository == 'KukuhakuAsso/ku2hakuasso.site'
         runs-on: ubuntu-latest

@@ -13,6 +13,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { spawnOptions, killTree } from "./proc-utils.mjs";
 import { ensureProjectsReady } from "./submodule-guard.mjs";
+import { filterEnabledProjects } from "./local-config.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, "..");
@@ -20,6 +21,21 @@ const ROOT_DIR = path.resolve(__dirname, "..");
 const projectTable = JSON.parse(
     fs.readFileSync(path.resolve(ROOT_DIR, "projects.json"), "utf-8"),
 );
+
+// ===== 个人本地配置：可选择性禁用部分仓库 =====
+// 被禁用的子项目不会出现在选择菜单中；直接指定项目名时给出提示并退出
+// （见 scripts/local-config.mjs）。
+const enabledProjects = filterEnabledProjects(projectTable);
+const disabledProjects = projectTable.filter(
+    (p) => !enabledProjects.includes(p),
+);
+if (disabledProjects.length) {
+    console.log(
+        `⏭️  以下子项目已在个人配置（.repos.local.json）中禁用: ${disabledProjects
+            .map((p) => p.name)
+            .join(", ")}`,
+    );
+}
 
 // ========== 方向键选择菜单 ==========
 function arrowSelect(options, displayFn) {
@@ -116,16 +132,16 @@ let targetName = argv.find((a) => !a.startsWith("-"));
 
 // 如果没有提供项目名，交互式选择
 if (!targetName) {
-    if (projectTable.length === 0) {
-        console.log("❌ projects.json 中没有配置任何子项目。");
+    if (enabledProjects.length === 0) {
+        console.log("❌ projects.json 中没有可用的子项目（可能全部被个人配置禁用）。");
         process.exit(1);
     }
 
-    if (projectTable.length === 1) {
-        targetName = projectTable[0].name;
+    if (enabledProjects.length === 1) {
+        targetName = enabledProjects[0].name;
         console.log(`📋 只有一个子项目，自动选择: ${targetName}`);
     } else {
-        const selected = await arrowSelect(projectTable, (p, i, isSelected) => {
+        const selected = await arrowSelect(enabledProjects, (p, i, isSelected) => {
             const prefix = isSelected ? "❯" : " ";
             const highlight = isSelected ? "\x1b[36m" : "\x1b[90m";
             const reset = "\x1b[0m";
@@ -135,11 +151,16 @@ if (!targetName) {
     }
 }
 
-const project = projectTable.find((p) => p.name === targetName);
+const project = enabledProjects.find((p) => p.name === targetName);
 
 if (!project) {
+    if (projectTable.some((p) => p.name === targetName)) {
+        console.log(`⏭️  项目 "${targetName}" 已在个人配置（.repos.local.json）中被禁用。`);
+        console.log("   如需启用，从 .repos.local.json 的 disabled 列表中移除对应条目。");
+        process.exit(0);
+    }
     console.log(`❌ 未找到项目 "${targetName}"。`);
-    console.log(`📋 可用项目: ${projectTable.map((p) => p.name).join(", ")}`);
+    console.log(`📋 可用项目: ${enabledProjects.map((p) => p.name).join(", ")}`);
     process.exit(1);
 }
 
