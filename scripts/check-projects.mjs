@@ -11,6 +11,7 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { filterEnabledProjects } from "./local-config.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, "..");
@@ -20,6 +21,19 @@ const projects = JSON.parse(
     fs.readFileSync(path.resolve(ROOT_DIR, "projects.json"), "utf-8"),
 );
 
+// ===== 个人本地配置：跳过被禁用的子项目 =====
+// 被禁用的子项目不参与冲突检查（见 scripts/local-config.mjs）。
+// 配置文件未提交，CI 中不存在时不影响任何检查。
+const enabledProjects = filterEnabledProjects(projects);
+const disabledProjects = projects.filter((p) => !enabledProjects.includes(p));
+if (disabledProjects.length) {
+    console.log(
+        `⏭️  以下子项目已在个人配置（.repos.local.json）中禁用，跳过检查: ${disabledProjects
+            .map((p) => p.name)
+            .join(", ")}`,
+    );
+}
+
 const errors = [];
 const warnings = [];
 const seenPort = new Map();
@@ -28,7 +42,7 @@ const seenPrefix = new Map(); // prefix -> project name
 
 const REQUIRED = ["name", "dir", "subPath", "outputDir", "devPort"];
 
-for (const p of projects) {
+for (const p of enabledProjects) {
     const label = p.name || p.dir || "(未命名)";
 
     // 1. 必填字段
@@ -129,12 +143,12 @@ for (let i = 0; i < prefixes.length; i++) {
 }
 
 // 汇总输出
-if (projects.length === 0) {
+if (enabledProjects.length === 0) {
     warnings.push("projects.json 为空，没有任何子项目注册");
 }
 
 const summary = [];
-for (const p of projects) {
+for (const p of enabledProjects) {
     summary.push(
         `  - ${p.name}: dir=${p.dir} port=${p.devPort} subPath=${p.subPath} proxy=[${(p.proxyApi || []).join(", ")}]`,
     );

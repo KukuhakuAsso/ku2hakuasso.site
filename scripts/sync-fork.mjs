@@ -14,6 +14,7 @@ import { readFileSync } from 'node:fs';
 import { createInterface } from 'node:readline';
 import { pathToFileURL } from 'node:url';
 import path from 'node:path';
+import { isDirDisabled, addDisabledRepos } from './local-config.mjs';
 
 const args = process.argv.slice(2);
 const AUTO = args.includes('--yes') || args.includes('-y');
@@ -251,16 +252,23 @@ async function runSync({ input, ask }) {
     console.log(`fork:sync — ${origin.owner}/${origin.repo} ← ${upstream.owner}/${upstream.repo}`);
 
     // 解析子模块（创建检查与 upstream 同步共用）
-    const subs = [];
+    const allSubs = [];
     try {
         for (const s of parseGitmodules(readFileSync('.gitmodules', 'utf8'))) {
             try {
-                subs.push({ path: s.path, upstream: resolveSubRepo(upstreamUrl, s.url) });
+                allSubs.push({ path: s.path, upstream: resolveSubRepo(upstreamUrl, s.url) });
             } catch (e) {
                 console.warn(`⚠ 跳过子模块 ${s.path}：${e.message}`);
             }
         }
     } catch { /* 没有 .gitmodules，忽略 */ }
+
+    // 个人配置已禁用的子模块不参与 fork 检查/创建/同步（见 scripts/local-config.mjs）
+    const disabledSubs = allSubs.filter((s) => isDirDisabled(s.path));
+    if (disabledSubs.length) {
+        console.log(`⏭️  个人配置（.repos.local.json）已禁用以下子模块，跳过: ${disabledSubs.map((s) => s.path).join('、')}`);
+    }
+    const subs = allSubs.filter((s) => !isDirDisabled(s.path));
 
     let token;
     const ensureToken = async () => { token = token ?? await resolveToken(input, ask); return token; };
@@ -284,31 +292,35 @@ async function runSync({ input, ask }) {
         }
     }
 
-    // 2. 子模块 fork 不存在时询问创建
+    // 2. 子模块 fork 不存在时逐个询问创建
+    // 逐个询问：选择「否」的子模块会写入个人配置（.repos.local.json），
+    // 后续 dev / build / fork:sync / fork:pr / submodules:update 都会跳过它。
     if (!NO_SUBS) {
         const missing = subs
             .filter((sub) => !gitRemoteExists(origin.owner, sub.upstream.repo))
             .map((sub) => ({ ...sub, fork: { owner: origin.owner, repo: sub.upstream.repo } }));
-        if (missing.length > 0) {
-            const list = missing.map((m) => `    ${m.fork.owner}/${m.fork.repo}  ←  ${m.upstream.owner}/${m.upstream.repo}`).join('\n');
-            const create = !NO_CREATE && (AUTO || await ask(`GitHub 上缺少以下子仓库 fork，是否创建？\n${list}\n`, false));
+        let tokenFailed = false;
+        for (const m of missing) {
+            const create = !NO_CREATE && (AUTO || await ask(`GitHub 上缺少子仓库 fork：${m.fork.owner}/${m.fork.repo}（← ${m.upstream.owner}/${m.upstream.repo}），是否创建？`, false));
             if (create) {
-                try {
-                    await ensureToken();
-                } catch (e) {
-                    console.warn(`⚠ 无法获取 GitHub Token，跳过子仓库创建：${e.message}`);
-                }
-                for (const m of missing) {
-                    if (!token) break;
+                if (!tokenFailed) {
                     try {
-                        const created = await createFork(m.upstream.owner, m.upstream.repo, m.fork.owner, token);
-                        console.log(`✔ 已创建子仓库 fork：${created.owner}/${created.repo}（${m.path}）`);
+                        await ensureToken();
                     } catch (e) {
-                        console.warn(`⚠ 子仓库 ${m.path} 创建失败：${e.message}`);
+                        tokenFailed = true;
+                        console.warn(`⚠ 无法获取 GitHub Token，跳过剩余子仓库创建：${e.message}`);
                     }
                 }
+                if (!token) continue; // 拿不到 token 本次不创建（也不改写个人配置）
+                try {
+                    const created = await createFork(m.upstream.owner, m.upstream.repo, m.fork.owner, token);
+                    console.log(`✔ 已创建子仓库 fork：${created.owner}/${created.repo}（${m.path}）`);
+                } catch (e) {
+                    console.warn(`⚠ 子仓库 ${m.path} 创建失败：${e.message}`);
+                }
             } else {
-                console.warn(`⚠ 跳过子仓库 fork 创建（${missing.map((m) => m.fork.repo).join('、')}）`);
+                console.warn(`⚠ 跳过子仓库 fork 创建：${m.fork.repo}（${m.path}）`);
+                addDisabledRepos([m.path]);
             }
         }
     }
