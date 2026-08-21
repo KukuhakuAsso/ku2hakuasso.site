@@ -282,3 +282,4 @@ pnpm run new:project MyGame --local --subpath MyGame
 | `subPath`   | 部署子路径（也是 dev 代理路径）          |
 | `devPort`   | 开发服务器端口                           |
 | `proxyApi`  | 需要主站转发的代理前缀列表               |
+| `enabled`   | 生产环境是否启用（缺省为`true`）。设为`false`时，`pnpm run build`（生产构建，CI 部署也走此命令）会跳过该子项目，不构建、不合并到 `dist-preview`；本地 `dev` / `proj:dev` 不受影响 |

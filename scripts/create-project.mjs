@@ -159,7 +159,7 @@ function registerProject(entry) {
         console.log(`[跳过] projects.json 已存在 dir=${entry.dir}`);
         return;
     }
-    projects.push(entry);
+    projects.push({ enabled: true, ...entry });
     fs.writeFileSync(file, JSON.stringify(projects, null, 4) + "\n");
     console.log(`[完成] 已注册到 projects.json: ${entry.name}`);
 }

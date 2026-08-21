@@ -28,6 +28,19 @@ const mainDisabled = isMainDisabled();
 const enabledProjects = filterEnabledProjects(projectTable);
 printDisabledNotice({ projects: projectTable, mainDisabled });
 
+// ===== 生产环境启用/关闭（projects.json 的 enabled 字段） =====
+// enabled === false 的子项目在生产构建（build-all / CI deploy）中不构建、不合并产物，
+// 本地开发（dev / proj:dev）不受影响。缺省视为启用。
+const prodEnabledProjects = enabledProjects.filter((p) => p.enabled !== false);
+const prodDisabledProjects = enabledProjects.filter((p) => p.enabled === false);
+if (prodDisabledProjects.length) {
+    console.log(
+        `⏭️  生产环境已关闭以下子项目（projects.json enabled=false），不构建: ${prodDisabledProjects
+            .map((p) => p.name)
+            .join("、")}`,
+    );
+}
+
 // ===== 子模块未初始化检测 =====
 // 未初始化（gitlink 未 checkout）的子模块目录不存在，构建会直接报错；
 // 这里先检测并询问是否初始化，选择「否」的子项目不构建、不合并产物。
@@ -36,7 +49,7 @@ const argv = process.argv.slice(2);
 const autoInit = argv.includes("--yes") || argv.includes("-y");
 const skipInit = argv.includes("--no-init");
 
-const { ready, skipped } = await ensureProjectsReady(enabledProjects, {
+const { ready, skipped } = await ensureProjectsReady(prodEnabledProjects, {
     autoInit,
     skipInit,
 });
