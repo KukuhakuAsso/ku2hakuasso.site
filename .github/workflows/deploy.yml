@@ -100,7 +100,11 @@ jobs:
             # 输出重定向保留，避免泄漏服务器配置等敏感信息
             - name: Trigger hook
               run: |
-                  curl -k -s -X POST "${{ secrets.HOOK_URL }}" > /dev/null 2>&1
+                  ASSET_URL="https://github.com/${{ github.repository }}/releases/download/build-latest/site.tar.gz"
+                  curl -k -sS --fail --retry 3 --retry-all-errors --retry-delay 5 \
+                    -X POST "${{ secrets.HOOK_URL }}" \
+                    --data-binary "$ASSET_URL" > /dev/null 2>&1 \
+                    || { echo "::warning::Webhook 触发失败，请检查 CVM 端 webhook 服务"; exit 1; }
 
     # 3. 部署 GitHub Pages 跳转页（.github/page）
     # 仅本仓库执行（旧 fork 工作流已弃用）
