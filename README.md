@@ -88,6 +88,23 @@ pnpm install
 > - `pnpm run dev -- --yes`：检测到未初始化时直接初始化，不再询问；
 > - `pnpm run dev -- --no-init`：直接跳过，不再询问（`build` / `proj:dev` 同样支持这两个旗标）。
 
+### 个人本地配置：选择性禁用部分仓库
+
+如果只想开发/构建部分仓库（主站或某个子项目），可以编辑根目录下的 `.repos.local.json`（已加入 `.gitignore`，只影响本机，不会提交）：
+
+```json
+{
+    "disabled": ["main", "vue-TelemetryInstruments"]
+}
+```
+
+- `"main"` 表示禁用主站（VitePress 主项目）；
+- 其余条目按 `projects.json` 中子项目的 `name` 或 `dir` 匹配（如 `"TelemetryInstruments"` 或 `"vue-TelemetryInstruments"`）。
+
+被禁用的仓库在 `dev`、`build`、`proj:dev`、`test`、`check:projects` 中一律跳过（不启动开发服务器、不构建、不测试、不检查）；子模块同步命令 `fork:sync`、`fork:pr`、`submodules:update` 也会跳过被禁用的子模块（不检查/不创建其 fork、不同步、不提交 PR），主仓库不受影响。`proj:dev` 直接指定被禁用的项目名时会给出提示并退出。
+
+交互流程中如果对某个子项目选择「否」，会自动把该项目写入 `.repos.local.json`（`dev` / `build` / `proj:dev` 询问「是否初始化子模块」时选 `n`，或 `fork:sync` 询问「是否创建子仓库 fork」时选 `n`），后续所有命令都会跳过它；需要时手动从配置的 `disabled` 列表中移除即可恢复。`--no-init` / `--no-create` 旗标与 CI 环境不会改写配置文件。文件不存在或格式错误时按「全部启用」处理，不影响任何脚本。
+
 构建时，脚本会根据 `projects.json` 中的 `buildCmd` 字段执行子项目构建；若该命令失败，则回退到默认命令 `pnpm run build`。
 
 > `preview:upstream` 用于预览上游（`upstream/dist` 分支）已部署的构建产物：脚本会 `git fetch upstream dist`，在临时目录创建该分支的 worktree，将其内容拷贝到 `dist-preview/` 后启动 `vite preview`，退出时自动清理临时 worktree。适用于在本地核对 CVM 上拉取到的实际部署内容。
@@ -265,3 +282,4 @@ pnpm run new:project MyGame --local --subpath MyGame
 | `subPath`   | 部署子路径（也是 dev 代理路径）          |
 | `devPort`   | 开发服务器端口                           |
 | `proxyApi`  | 需要主站转发的代理前缀列表               |
+| `enabled`   | 生产环境是否启用（缺省为`true`）。设为`false`时，`pnpm run build`（生产构建，CI 部署也走此命令）会跳过该子项目，不构建、不合并到 `dist-preview`；本地 `dev` / `proj:dev` 不受影响 |

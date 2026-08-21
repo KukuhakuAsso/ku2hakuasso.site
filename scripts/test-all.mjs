@@ -6,6 +6,7 @@ import { execSync } from "child_process";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { filterEnabledProjects } from "./local-config.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, "..");
@@ -14,9 +15,21 @@ const projects = JSON.parse(
     fs.readFileSync(path.resolve(ROOT_DIR, "projects.json"), "utf-8"),
 );
 
+// ===== 个人本地配置：跳过被禁用的子项目 =====
+// 被禁用的子项目不运行测试（见 scripts/local-config.mjs）。
+const enabledProjects = filterEnabledProjects(projects);
+const disabledProjects = projects.filter((p) => !enabledProjects.includes(p));
+if (disabledProjects.length) {
+    console.log(
+        `⏭️  以下子项目已在个人配置（.repos.local.json）中禁用，跳过测试: ${disabledProjects
+            .map((p) => p.name)
+            .join(", ")}`,
+    );
+}
+
 const results = [];
 
-for (const project of projects) {
+for (const project of enabledProjects) {
     const label = project.name || project.dir;
     const projectDir = path.resolve(ROOT_DIR, project.dir);
     const pkgPath = path.join(projectDir, "package.json");

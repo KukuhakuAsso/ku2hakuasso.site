@@ -5,6 +5,11 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { spawnOptions, killTree } from "./proc-utils.mjs";
 import { ensureProjectsReady } from "./submodule-guard.mjs";
+import {
+    filterEnabledProjects,
+    isMainDisabled,
+    printDisabledNotice,
+} from "./local-config.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, "..");
@@ -12,6 +17,13 @@ const ROOT_DIR = path.resolve(__dirname, "..");
 const projectTable = JSON.parse(
     fs.readFileSync(path.resolve(ROOT_DIR, "projects.json"), "utf-8"),
 );
+
+// ===== 个人本地配置：可选择性禁用部分仓库 =====
+// .repos.local.json 中可禁用主站（"main"）或任意子项目（按 name / dir 匹配），
+// 被禁用的仓库不拉起开发服务器（见 scripts/local-config.mjs）。
+const mainDisabled = isMainDisabled();
+const enabledProjects = filterEnabledProjects(projectTable);
+printDisabledNotice({ projects: projectTable, mainDisabled });
 
 // ===== 子模块未初始化检测 =====
 // 未初始化（gitlink 未 checkout）的子模块目录不存在，直接 spawn 会因
@@ -21,7 +33,7 @@ const argv = process.argv.slice(2);
 const autoInit = argv.includes("--yes") || argv.includes("-y");
 const skipInit = argv.includes("--no-init");
 
-const { ready, skipped } = await ensureProjectsReady(projectTable, {
+const { ready, skipped } = await ensureProjectsReady(enabledProjects, {
     autoInit,
     skipInit,
 });
@@ -30,12 +42,18 @@ console.log("🚀 正在并发启动所有项目的开发服务器...\n");
 
 const runningProcesses = [];
 
-// 1. 启动 VitePress 博客
-const docsServer = spawn("pnpm", ["vitepress", "dev", "docs"], {
-    ...spawnOptions,
-    cwd: ROOT_DIR,
-});
-runningProcesses.push(docsServer);
+// 1. 启动 VitePress 博客（除非被个人配置禁用）
+if (mainDisabled) {
+    console.log(
+        `⏭️  主站已被个人配置（.repos.local.json）禁用，跳过 VitePress 开发服务器。`,
+    );
+} else {
+    const docsServer = spawn("pnpm", ["vitepress", "dev", "docs"], {
+        ...spawnOptions,
+        cwd: ROOT_DIR,
+    });
+    runningProcesses.push(docsServer);
+}
 
 // 2. 自动遍历 JSON 表，启动所有已就绪的子项目
 for (const project of ready) {

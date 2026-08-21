@@ -2,6 +2,7 @@ import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { isDirDisabled, filterEnabledDirs } from './local-config.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, '..');
@@ -12,7 +13,13 @@ const run = (command, args) => execFileSync(command, args, { stdio: 'inherit' })
 const projects = JSON.parse(
     fs.readFileSync(path.resolve(ROOT_DIR, 'projects.json'), 'utf-8'),
 );
-const submoduleDirs = projects.map((project) => project.dir);
+// 个人配置已禁用的子模块不参与同步（见 scripts/local-config.mjs）
+const allDirs = projects.map((project) => project.dir);
+const disabledDirs = allDirs.filter((d) => isDirDisabled(d));
+if (disabledDirs.length) {
+    console.log(`⏭️  个人配置（.repos.local.json）已禁用以下子模块，跳过同步: ${disabledDirs.join('、')}`);
+}
+const submoduleDirs = filterEnabledDirs(allDirs);
 
 const remoteRepo = (cwd, remote) => {
     const url = execFileSync('git', ['-C', cwd, 'remote', 'get-url', remote], {

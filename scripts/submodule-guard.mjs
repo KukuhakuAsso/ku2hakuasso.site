@@ -18,6 +18,7 @@ import fs from "node:fs";
 import path from "node:path";
 import readline from "node:readline";
 import { fileURLToPath } from "node:url";
+import { addDisabledRepos } from "./local-config.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const ROOT_DIR = path.resolve(__dirname, "..");
@@ -87,12 +88,17 @@ export function installDependencies() {
     console.log("✔ 依赖安装完成");
 }
 
-/** 交互式 y/N 询问；非 TTY 环境（如 CI）直接返回默认值 */
+/**
+ * 交互式 y/N 询问；非 TTY 环境（如 CI）直接返回默认值。
+ * @returns {Promise<{ answer: boolean, interactive: boolean }>}
+ *   answer      是否同意（交互或默认值）
+ *   interactive 本次是否真正发生了交互（false 表示非 TTY 自动跳过）
+ */
 export function askYesNo(question, def = false) {
     return new Promise((resolve) => {
         if (!process.stdin.isTTY || !process.stdout.isTTY) {
             console.log(`ℹ️  非交互环境，默认${def ? "初始化" : "跳过"}。`);
-            resolve(def);
+            resolve({ answer: def, interactive: false });
             return;
         }
         const rl = readline.createInterface({
@@ -104,10 +110,13 @@ export function askYesNo(question, def = false) {
             rl.close();
             const text = answer.trim().toLowerCase();
             if (text === "") {
-                resolve(def);
+                resolve({ answer: def, interactive: true });
                 return;
             }
-            resolve(text === "y" || text === "yes");
+            resolve({
+                answer: text === "y" || text === "yes",
+                interactive: true,
+            });
         });
     });
 }
@@ -149,10 +158,14 @@ export async function ensureProjectsReady(projects, options = {}) {
         }
 
         let shouldInit = autoInit;
+        let declined = false;
         if (!shouldInit && !skipInit) {
-            shouldInit = await askYesNo(
+            const { answer, interactive } = await askYesNo(
                 `❓ 是否初始化子模块 ${project.dir}？`,
             );
+            shouldInit = answer;
+            // 仅在真正交互且用户选择「否」时记入个人配置；--no-init / CI 不写配置
+            declined = interactive && !answer;
         }
 
         if (shouldInit) {
@@ -174,6 +187,10 @@ export async function ensureProjectsReady(projects, options = {}) {
                 `⏭️  跳过未初始化的子项目 ${project.name}（${project.dir}）`,
             );
             skipped.push(project);
+            if (declined) {
+                // 用户选择「否」→ 记入个人配置，后续 dev/build/sync 等命令都会跳过它
+                addDisabledRepos([project.dir]);
+            }
         }
     }
 

@@ -4,6 +4,11 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { ensureProjectsReady } from "./submodule-guard.mjs";
+import {
+    filterEnabledProjects,
+    isMainDisabled,
+    printDisabledNotice,
+} from "./local-config.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, "..");
@@ -16,6 +21,26 @@ const projectTable = JSON.parse(
 // ✨ 优化：直接将预览总目录生成在项目根目录下，方便管理
 const DIST_PREVIEW = path.resolve(ROOT_DIR, "dist-preview");
 
+// ===== 个人本地配置：可选择性禁用部分仓库 =====
+// .repos.local.json 中可禁用主站（"main"）或任意子项目（按 name / dir 匹配），
+// 被禁用的仓库不构建、不合并产物（见 scripts/local-config.mjs）。
+const mainDisabled = isMainDisabled();
+const enabledProjects = filterEnabledProjects(projectTable);
+printDisabledNotice({ projects: projectTable, mainDisabled });
+
+// ===== 生产环境启用/关闭（projects.json 的 enabled 字段） =====
+// enabled === false 的子项目在生产构建（build-all / CI deploy）中不构建、不合并产物，
+// 本地开发（dev / proj:dev）不受影响。缺省视为启用。
+const prodEnabledProjects = enabledProjects.filter((p) => p.enabled !== false);
+const prodDisabledProjects = enabledProjects.filter((p) => p.enabled === false);
+if (prodDisabledProjects.length) {
+    console.log(
+        `⏭️  生产环境已关闭以下子项目（projects.json enabled=false），不构建: ${prodDisabledProjects
+            .map((p) => p.name)
+            .join("、")}`,
+    );
+}
+
 // ===== 子模块未初始化检测 =====
 // 未初始化（gitlink 未 checkout）的子模块目录不存在，构建会直接报错；
 // 这里先检测并询问是否初始化，选择「否」的子项目不构建、不合并产物。
@@ -24,7 +49,7 @@ const argv = process.argv.slice(2);
 const autoInit = argv.includes("--yes") || argv.includes("-y");
 const skipInit = argv.includes("--no-init");
 
-const { ready, skipped } = await ensureProjectsReady(projectTable, {
+const { ready, skipped } = await ensureProjectsReady(prodEnabledProjects, {
     autoInit,
     skipInit,
 });
@@ -37,14 +62,23 @@ try {
     }
     fs.mkdirSync(DIST_PREVIEW, { recursive: true });
 
-    // 2. 构建 VitePress 博客本体
-    console.log("📦 正在构建 VitePress 博客...");
-    // ✨ 修复：显式指定在 ROOT_DIR 下执行命令，防止找不到 docs 目录
-    execSync("pnpm vitepress build docs", { cwd: ROOT_DIR, stdio: "inherit" });
+    // 2. 构建 VitePress 博客本体（除非被个人配置禁用）
+    if (mainDisabled) {
+        console.log(
+            "⏭️  主站已被个人配置（.repos.local.json）禁用，跳过 VitePress 构建。",
+        );
+    } else {
+        console.log("📦 正在构建 VitePress 博客...");
+        // ✨ 修复：显式指定在 ROOT_DIR 下执行命令，防止找不到 docs 目录
+        execSync("pnpm vitepress build docs", {
+            cwd: ROOT_DIR,
+            stdio: "inherit",
+        });
 
-    // 复制博客产物
-    const vitepressDist = path.resolve(ROOT_DIR, "docs/.vitepress/dist");
-    fs.cpSync(vitepressDist, DIST_PREVIEW, { recursive: true });
+        // 复制博客产物
+        const vitepressDist = path.resolve(ROOT_DIR, "docs/.vitepress/dist");
+        fs.cpSync(vitepressDist, DIST_PREVIEW, { recursive: true });
+    }
 
     // 3. 动态遍历构建表中的已就绪子项目
     for (const project of ready) {
