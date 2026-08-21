@@ -1,4 +1,0 @@
-changeBg: bg.webp;
-谜题闭环完成，本节流程结束。;
-你的 sessionId={sessionId}。;
-end;

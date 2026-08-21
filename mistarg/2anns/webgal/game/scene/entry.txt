@@ -1,5 +1,0 @@
-setVar: sessionId=mistarg001 - global;
-setVar: quest=start - global;
-changeBg: bg.webp;
-欢迎进入 MIST ARG 测试章节。;
-choose: 走左路:left.txt|走右路:right.txt;
