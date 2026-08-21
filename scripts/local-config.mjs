@@ -14,8 +14,8 @@
 //     （如 "TelemetryInstruments" 或 "vue-TelemetryInstruments" 均可）
 //
 // 被禁用的仓库在 dev / build / proj:dev / test / check:projects 以及
-// fork:sync / fork:pr / submodules:update 等子模块同步命令中一律跳过。
-// 交互流程中选择「否」（不初始化子模块 / 不创建子仓库 fork）的项目会被自动追加写入本文件。
+// submodules:update 等子模块同步命令中一律跳过。
+// 交互流程中选择「否」（不初始化子模块）的项目会被自动追加写入本文件。
 // 配置文件不存在或 JSON 格式错误时按「全部启用」处理，不影响任何脚本。
 import fs from "node:fs";
 import path from "node:path";

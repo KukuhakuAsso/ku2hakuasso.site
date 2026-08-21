@@ -10,8 +10,8 @@ rmSync(tempDir, { recursive: true, force: true });
 let worktreeAdded = false;
 
 try {
-    console.log("📥 正在 fetch upstream/dist...");
-    execFileSync("git", ["fetch", "upstream", "dist"], {
+    console.log("📥 正在 fetch origin/dist...");
+    execFileSync("git", ["fetch", "origin", "dist"], {
         cwd: rootDir,
         stdio: "inherit",
     });
