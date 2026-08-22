@@ -28,6 +28,7 @@
         "check:projects": "node scripts/check-projects.mjs",
         "check:links": "node scripts/check-links.mjs",
         "check:submodules": "node scripts/check-submodules.mjs",
+        "sync:submodules": "node scripts/sync-submodules.mjs",
         "submodules:update": "node scripts/update-submodules.mjs"
     },
     "baseUrl": "https://www.ku2hakuasso.site",

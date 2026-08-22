@@ -1,16 +1,19 @@
 // scripts/check-submodules.mjs
-// 校验主仓库记录的子模块 gitlink 是否指向其 main/master 分支上的提交。
+// 校验主仓库记录的「自动追踪」子模块 gitlink 是否指向其 main/master 分支上的提交。
 // 供 CI 使用（.github/workflows/ci.yml 的 submodule-branch job）。
 //
 // 背景：主仓库通过 gitlink 锁定子模块提交；若该提交不在子项目 main/master
 // 分支上（例如误提交测试分支、或指向被 force push 移除的孤儿提交），
 // 构建/部署会拉取到非预期版本。本脚本在提交/PR 时拦截此类情况。
 //
-// 判定（对 .gitmodules 中每个子模块）：
+// 规则：只有 .gitmodules 中显式配置 branch=main|master 的子模块属于「自动追踪」，
+// 强制其 gitlink 必须位于该分支；未配置 branch 或指向其他分支的子模块视为
+// 「固定 gitlink」（pinned，如锁定的第三方稳定版本），跳过不校验，允许其存在。
+//
+// 判定（对每个自动追踪子模块）：
 //   1. git ls-tree HEAD <path> 取 gitlink 提交
-//   2. 读取 submodule.<path>.branch：已配置则必须是 main 或 master；
-//      未配置则以 main、master 依次作为候选分支
-//   3. 在临时目录里 git init + 解析相对 URL + git fetch origin <候选分支>
+//   2. 读取 submodule.<path>.branch（必须为 main 或 master）
+//   3. 在临时目录里 git init + 解析相对 URL + git fetch origin <branch>
 //   4. git merge-base --is-ancestor <gitlink> FETCH_HEAD
 //      —— gitlink 是分支祖先（含相等）即视为「位于该分支上」
 import { execFileSync } from "node:child_process";
@@ -104,19 +107,15 @@ function main() {
             continue;
         }
 
-        // 2. 分支候选：配置了 branch 则必须为 main/master；否则 main/master 依次尝试
-        let candidates;
-        if (sub.branch) {
-            if (!ALLOWED_BRANCHES.includes(sub.branch)) {
-                errors.push(
-                    `[${sub.path}] .gitmodules 配置的 branch="${sub.branch}"，仅允许 ${ALLOWED_BRANCHES.join("/")}`,
-                );
-                continue;
-            }
-            candidates = [sub.branch];
-        } else {
-            candidates = [...ALLOWED_BRANCHES];
+        // 2. 分支候选：仅校验显式配置 branch=main|master 的「自动追踪」子模块；
+        //    未配置 branch 或指向其他分支的视为固定 gitlink（pinned），跳过不校验
+        if (!sub.branch || !ALLOWED_BRANCHES.includes(sub.branch)) {
+            console.log(
+                `⏭️  [${sub.path}] 未配置 branch 或非 main/master（${sub.branch || "无"}），视为固定 gitlink，跳过校验`,
+            );
+            continue;
         }
+        const candidates = [sub.branch];
 
         // 3/4. 临时仓库拉取候选分支，校验 gitlink 是否为分支祖先
         const url = resolveSubmoduleUrl(sub.url, mainOrigin);

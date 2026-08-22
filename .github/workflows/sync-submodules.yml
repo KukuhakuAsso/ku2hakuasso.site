@@ -9,6 +9,11 @@ permissions:
     contents: write
     pull-requests: write
 
+# 防止定时触发与手动触发重叠运行，避免子模块指针冲突
+concurrency:
+    group: sync-submodules
+    cancel-in-progress: false
+
 jobs:
     sync:
         runs-on: ubuntu-latest
@@ -30,38 +35,8 @@ jobs:
                   node-version: 24
                   cache: pnpm
 
-            - name: check submodule branch is main/master
-              run: |
-                  set -euo pipefail
-                  paths=$(git config -f .gitmodules --get-regexp '^submodule\..*\.path$' | awk '{print $2}') || true
-                  [ -n "$paths" ] || { echo "::error::未找到任何子模块"; exit 1; }
-                  while IFS= read -r path; do
-                      branch=$(git config -f .gitmodules --get "submodule.${path}.branch" || true)
-                      case "$branch" in
-                          main|master) echo "✅ ${path} → branch=${branch}" ;;
-                          *)
-                              echo "::error::子模块 ${path} 的 branch 配置为 '${branch:-未配置}'，必须为 main/master"
-                              exit 1
-                              ;;
-                      esac
-                  done <<< "$paths"
-
-            - name: Update submodule pointers
-              run: |
-                  set -euo pipefail
-                  # 显式选择最新 main/master：逐个子模块拉取远端并检出其分支最新提交
-                  while IFS= read -r path; do
-                      branch=$(git config -f .gitmodules --get "submodule.${path}.branch")
-                      case "$branch" in
-                          main|master) ;;
-                          *) echo "::error::子模块 ${path} 的 branch 配置非法（${branch}）"; exit 1 ;;
-                      esac
-                      echo "⏳ 更新 ${path} → 最新 ${branch} 分支..."
-                      git -C "$path" fetch --quiet origin "$branch"
-                      git -C "$path" checkout --quiet "origin/$branch"
-                      git add "$path"
-                      echo "✅ ${path} = $(git -C "$path" rev-parse --short HEAD)"
-                  done < <(git config -f .gitmodules --get-regexp '^submodule\..*\.path$' | awk '{print $2}')
+            - name: Update submodule pointers（显式选择最新 main/master）
+              run: node scripts/sync-submodules.mjs
 
             - name: Refresh lockfile
               run: pnpm install
@@ -84,7 +59,7 @@ jobs:
                   git fetch --quiet origin "$default_branch"
                   branch="chore/sync-submodules-$(date -u +%Y%m%d)"
                   git checkout -b "$branch" "origin/$default_branch"
-                  git add pnpm-lock.yaml vue-mistarg2anns vue-TelemetryInstruments
+                  git add -A
                   git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'chore: sync submodules'
                   # 守卫：校验新 gitlink 位于 main/master，失败则中止（不推送、不建 PR）
                   node scripts/check-submodules.mjs
