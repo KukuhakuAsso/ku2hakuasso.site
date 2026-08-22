@@ -35,7 +35,7 @@ jobs:
                   node-version: 24
                   cache: pnpm
 
-            - name: Update submodule pointers（显式选择最新 main/master）
+            - name: Update submodule pointers (latest main/master)
               run: node scripts/sync-submodules.mjs
 
             - name: Refresh lockfile
