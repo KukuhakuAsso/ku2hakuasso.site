@@ -40,14 +40,30 @@ jobs:
             - name: Lint (ESLint + markdownlint)
               run: pnpm run lint
 
-            - name: 代理与子项目配置冲突检测
+            - name: Check project proxy/config conflicts
               run: pnpm run check:projects
 
-            - name: 链接/资源检查
+            - name: Check links/resources
               run: pnpm run check:links
 
-            - name: 子项目测试
+            - name: Run subproject tests
               run: pnpm run test
+
+    # 子模块守卫：主仓库记录的 gitlink 必须位于子项目的 main/master 分支上，
+    # 防止误提交测试分支或孤儿提交导致构建/部署拉取到非预期版本。
+    submodule-branch:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v7
+
+            - name: Set up Node
+              uses: actions/setup-node@v7
+              with:
+                  node-version: 24
+
+            - name: Verify submodules point to main/master
+              run: node scripts/check-submodules.mjs
 
     # 构建校验：确保主站与所有子项目可成功构建
     build:
@@ -69,7 +85,7 @@ jobs:
                   node-version: 24
                   cache: pnpm
 
-            - name: Cache VitePress / Vite 构建缓存
+            - name: Cache VitePress / Vite build
               uses: actions/cache@v6
               with:
                   path: |

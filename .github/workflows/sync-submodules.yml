@@ -9,6 +9,11 @@ permissions:
     contents: write
     pull-requests: write
 
+# 防止定时触发与手动触发重叠运行，避免子模块指针冲突
+concurrency:
+    group: sync-submodules
+    cancel-in-progress: false
+
 jobs:
     sync:
         runs-on: ubuntu-latest
@@ -30,8 +35,8 @@ jobs:
                   node-version: 24
                   cache: pnpm
 
-            - name: Update submodule pointers
-              run: git submodule update --remote --recursive
+            - name: Update submodule pointers (latest main/master)
+              run: node scripts/sync-submodules.mjs
 
             - name: Refresh lockfile
               run: pnpm install
@@ -43,13 +48,20 @@ jobs:
               env:
                   GH_TOKEN: ${{ github.token }}
               run: |
-                  if git diff --quiet; then
+                  # 检测有无更新（含已暂存 gitlink 与 lockfile 改动）
+                  if git diff --quiet HEAD; then
                     echo "No submodule updates available"
                     exit 0
                   fi
+                  # 选择仓库最新的 main/master（默认分支）作为 PR 基础
+                  default_branch=$(gh repo view --json defaultBranchRef -q .defaultBranchRef.name 2>/dev/null || echo main)
+                  echo "默认分支: ${default_branch}"
+                  git fetch --quiet origin "$default_branch"
                   branch="chore/sync-submodules-$(date -u +%Y%m%d)"
-                  git checkout -b "$branch"
-                  git add pnpm-lock.yaml vue-mistarg2anns vue-TelemetryInstruments
+                  git checkout -b "$branch" "origin/$default_branch"
+                  git add -A
                   git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'chore: sync submodules'
+                  # 守卫：校验新 gitlink 位于 main/master，失败则中止（不推送、不建 PR）
+                  node scripts/check-submodules.mjs
                   git push --set-upstream origin "$branch"
-                  gh pr create --base main --head "$branch" --title 'chore: sync submodules' --body 'Automated submodule update with frozen install and build validation.'
+                  gh pr create --base "$default_branch" --head "$branch" --title 'chore: sync submodules' --body 'Automated submodule update with frozen install and build validation.'
