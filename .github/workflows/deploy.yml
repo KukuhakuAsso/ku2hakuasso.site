@@ -96,15 +96,76 @@ jobs:
                     --notes "自动构建产物，供 CVM 拉取" \
                     --latest
 
-            # 通知 CVM：POST body 携带构建产物下载链接，宝塔 Webhook 会把它作为 $1 传给部署脚本
-            # 输出重定向保留，避免泄漏服务器配置等敏感信息
-            - name: Trigger hook
+            # 通知 CVM（异步）：GitHub 通知CVM 执行部署。
+            # 需要两个宝塔 webhook 入口：
+            #   HOOK_URL        = 触发入口
+            #   HOOK_STATUS_URL = 状态入口
+            # 之后尽力轮询部署状态；无论是否拿到状态，都只发警告、不判失败。
+            - name: Trigger hook (异步通知 + 状态查询)
               run: |
-                  ASSET_URL="https://github.com/${{ github.repository }}/releases/download/build-latest/site.tar.gz"
-                  curl -k -sS --fail --retry 3 --retry-all-errors --retry-delay 5 \
-                    -X POST "${{ secrets.HOOK_URL }}" \
-                    --data-binary "$ASSET_URL" > /dev/null 2>&1 \
-                    || { echo "::warning::Webhook 触发失败，请检查 CVM 端 webhook 服务"; exit 1; }
+                  HOOK_URL="${{ secrets.HOOK_URL }}"
+                  STATUS_URL="${{ secrets.HOOK_STATUS_URL }}"
+                  # 宝塔用 query 的 param 传给脚本 $1；这里只传本次 run_id（纯数字，无需 URL 编码）
+                  case "$HOOK_URL" in
+                      *\?*) TRIGGER_URL="$HOOK_URL&param=${{ github.run_id }}" ;;
+                      *)    TRIGGER_URL="$HOOK_URL?param=${{ github.run_id }}" ;;
+                  esac
+
+                  if [ -z "$HOOK_URL" ]; then
+                      echo "::warning::secrets.HOOK_URL 未配置，CVM 未收到通知，站点可能未更新"
+                      exit 0
+                  fi
+                  if [ -n "$STATUS_URL" ] && [ "$STATUS_URL" = "$HOOK_URL" ]; then
+                      echo "::warning::HOOK_STATUS_URL 与 HOOK_URL 相同（会重复触发部署），已跳过状态查询"
+                      STATUS_URL=""
+                  fi
+
+                  # 1) 异步触发：宝塔侧 nohup 后台执行并立即返回 200，不等待部署完成
+                  TRIGGER_CODE="$(curl -k -sS --connect-timeout 10 --max-time 30 \
+                    "$TRIGGER_URL" \
+                    -o /dev/null -w '%{http_code}' 2>/dev/null)" \
+                    || TRIGGER_RC=$?
+                  if [ -n "${TRIGGER_RC:-}" ] || [ "${TRIGGER_CODE:-000}" -lt 200 ] || [ "${TRIGGER_CODE:-000}" -ge 300 ]; then
+                      echo "::warning::CVM 通知失败（curl 退出码 ${TRIGGER_RC:-0}，HTTP ${TRIGGER_CODE:-无}），站点可能未更新"
+                      exit 0
+                  fi
+                  echo "已通知 CVM 开始部署（HTTP $TRIGGER_CODE）"
+
+                  # 2) 尽力轮询服务器部署状态（约 6 次 × 8s），拿不到最终状态只警告、不判失败
+                  if [ -z "$STATUS_URL" ]; then
+                      echo "::warning::未配置 secrets.HOOK_STATUS_URL，已跳过服务器状态查询"
+                      exit 0
+                  fi
+                  RESULT="unknown"
+                  for i in 1 2 3 4 5 6; do
+                      STATUS_RC=""
+                      BODY_OUT="$(curl -k -sS --connect-timeout 5 --max-time 10 \
+                        "$STATUS_URL" 2>/dev/null)" \
+                        || STATUS_RC=$?
+                      if [ -n "$STATUS_RC" ]; then
+                          echo "::warning::第 ${i} 次查询服务器状态失败（curl 退出码 $STATUS_RC）"
+                          sleep 8
+                          continue
+                      fi
+                      ST="$(printf '%s' "$BODY_OUT" | grep -o '"status":"[a-z]*"' | head -n1 | cut -d'"' -f4)"
+                      RUN="$(printf '%s' "$BODY_OUT" | grep -o '"run_id":"[^"]*"' | head -n1 | cut -d'"' -f4)"
+                      if [ -z "$ST" ] || [ "$RUN" != "${{ github.run_id }}" ]; then
+                          # 状态文件为空或还是上一次部署的，等部署脚本写入新状态
+                          sleep 8
+                          continue
+                      fi
+                      case "$ST" in
+                          success) RESULT="success"; break ;;
+                          failed)  RESULT="failed";  break ;;
+                          *)       sleep 8 ;;
+                      esac
+                  done
+
+                  case "$RESULT" in
+                      success) echo "服务器部署状态：success" ;;
+                      failed)  echo "::warning::CVM 部署失败，请检查 CVM 端 /www/webhook/ku2hakuasso-deploy.log" ;;
+                      *)       echo "::warning::未获取到服务器最终部署状态（可能仍在部署中或状态服务不可用），请手动部署" ;;
+                  esac
 
     # 3. 部署 GitHub Pages 跳转页（.github/page）
     # 仅本仓库执行（旧 fork 工作流已弃用）
