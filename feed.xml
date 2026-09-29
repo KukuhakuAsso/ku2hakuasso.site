@@ -4,7 +4,7 @@
         <title>空白解谜组</title>
         <link>https://www.ku2hakuasso.site/</link>
         <description>空白永不败北</description>
-        <lastBuildDate>Sat, 22 Aug 2026 04:52:15 GMT</lastBuildDate>
+        <lastBuildDate>Tue, 29 Sep 2026 12:18:53 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <item>
@@ -445,7 +445,7 @@ RXQYVETBHRMARTWOAPBKL
 <li>对于评论中的密语：<code>6861766566756E</code>，解为ASCII码后可得<code>havefun</code><cb>（玩的愉快）</cb>。</li>
 <li>对于介绍中的密语，再对照使用两次评论中的密语：</li>
 </ul>
-<div class="language-"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang"></span><pre><!--::markdown-it-async::zjeuw9lz9fr1qgb2he8m7u::--><code>06 0E 02 0D 0F 1B 09 00 04 04 00 5C 5C
+<div class="language-"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang"></span><pre><!--::markdown-it-async::pd77iwmapra9uiio56l42u::--><code>06 0E 02 0D 0F 1B 09 00 04 04 00 5C 5C
 
 68 61 76 65 66 75 6E 68 61 76 65 66 75</code></pre>
 </div><p>对两组异或运算(对二进制位运算，运算规则是相同得0、不同得1的)，再解为ASCII码：</p>
@@ -714,7 +714,7 @@ n  o  t  h  i  n  g  h  e  r  e  :  )
 </tr>
 </WikiTable>
 <p>在3.3版本<a href="https://res1999.huijiwiki.com/wiki/%E5%89%8D%E7%BA%BF%E8%A7%82%E5%AF%9F%E5%AE%A4" target="_blank" rel="noreferrer">前线观察室</a>中对应有一份机密卷轴，两侧的摩斯密码字符数与电视机中<code>CORRUPTED_MEMORY_BLOCK_01</code>中的文本字符数一致。将其逐行对应：</p>
-<div class="language-"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang"></span><pre><!--::markdown-it-async::xe5z29xfwabsf94r32bbt::--><code>RXQYVETBHRMARTWOAPBKL
+<div class="language-"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang"></span><pre><!--::markdown-it-async::mut1zeu7ep9b0cbof2bwss::--><code>RXQYVETBHRMARTWOAPBKL
 
 ···-·-·····------·-··
 
@@ -730,7 +730,7 @@ TXMBVHEIEPRZA
 
 -····--·-·-·-</code></pre>
 </div><p>因为提示“过滤器”、“噪声”，尝试仅保留“-”对应的字母，得到：</p>
-<div class="language-"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang"></span><pre><!--::markdown-it-async::zn9z97g5wimaa9ym7v5gn::--><code>YEARTWOAB
+<div class="language-"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang"></span><pre><!--::markdown-it-async::fofqcu08te6ms1ckm7zuf::--><code>YEARTWOAB
 
 OVETHESKEL
 
@@ -738,7 +738,7 @@ ETONSOF
 
 THEERA</code></pre>
 </div><p>即<code>Year two above the skeletons of the era.</code><cb>（第二年的时代骸骨之上）</cb>，提示着查看「《重返未来：1999》二周年纪念动画：旧世新生」<a href="https://www.bilibili.com/video/BV1tPJrz8E7t/?t=45" target="_blank" rel="noreferrer">46秒时的恐龙骨架。</a>注意到视频左下角快速闪过了八帧不同的黑白方块，将黑色记为1、白色记为0，根据2.8版本剧情中的主要角色兀尔德为盲人，联系<a href="https://zh.wikipedia.org/wiki/%E7%9B%B2%E6%96%87#%E6%8B%89%E4%B8%81%E5%AD%97%E6%AF%8D%E8%A1%A8%E7%A4%BA%E6%B3%95" target="_blank" rel="noreferrer">盲文字符表</a>，按6个一组读取,按盲文字母阅读顺序从上往下从右往左排列<cb>（1对应凸0对应凹）</cb>。则有：</p>
-<div class="language-"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang"></span><pre><!--::markdown-it-async::ungli89z85pocs7ehxavsn::--><code>100011 001101 011101-&gt; S H E
+<div class="language-"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang"></span><pre><!--::markdown-it-async::f1ue5pc9znq2qe9h8opye::--><code>100011 001101 011101-&gt; S H E
 
 101011 100011 -&gt; I S
 
@@ -764,7 +764,7 @@ THEERA</code></pre>
 <p>时钟上写着<code>How much time do you have left? tsvwqfotxstnqdwyb</code><cb>（你还剩下多少时间？）</cb>该图片的EXIF信息中，IFD0-Artist有内容<code>Multiplied by the Celestial Cycle, shifted by the Earthly Branches</code><cb>（与周天相乘，与地支相移）</cb>。根据“相乘”和“相移”，能想到<a href="https://ctf-wiki.org/crypto/classical/monoalphabetic/#_15" target="_blank" rel="noreferrer">仿射密码</a><cb>（单表代换古典密码，结合了“加法密码”和“乘法密码”的原理）</cb>
 其加密函数是$E(x)=(ax+b) \pmod{m}$ <cb>（a为相乘，b为相移，m是字母表长度，这里取26）</cb>，对应的解密函数为 $D(x)=a^{-1}(x-b) \pmod{m}$</p>
 <p>提示中反复提到的时间引导我们联想到《<a href="https://res1999.huijiwiki.com/wiki/%E4%B8%8D%E8%80%81%E6%98%A5" target="_blank" rel="noreferrer">不老春</a>》剧情。在对应的3.4版机密卷轴中，摩斯密码<code>XIAN YAO LONGEVITY SEAL</code>，把英文字母按顺序对应1到26数字后：</p>
-<div class="language-"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang"></span><pre><!--::markdown-it-async::1tu8xomqdisfuhpv8aqexr::--><code>X  I  A  N  Y  A  O  L  O  N  G  E  V  I  T  Y  S  E  A  L
+<div class="language-"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang"></span><pre><!--::markdown-it-async::utevv9iojvrqfrjsnloe7::--><code>X  I  A  N  Y  A  O  L  O  N  G  E  V  I  T  Y  S  E  A  L
 24 09 01 14 25 15 01 12 15 14 07 05 22 09 20 25 19 05 01 12</code></pre>
 </div><p>所有数字之和为255。将其视为角度，代入到日晷中，其指向酉时。
 酉时在地支顺位中排行10。</p>
@@ -779,7 +779,7 @@ THEERA</code></pre>
 <p>本关卡需要利用浏览器的“开发人员工具”<cb>（一般浏览器按F12或者Ctrl+Shift+I即可打开）</cb>完成。由HTTP404的提示可以在网页请求的请求标头<cb>（请求标头（Request Headers）是 HTTP 协议中，客户端向服务器发送请求时，附带在请求行之后的一组键值对信息。它用来告诉服务器关于客户端、请求内容、期望的响应格式等元数据。）</cb>中发现网页尝试获取的cookie中有四个值为空的&quot;ofrenda&quot;字段<cb>（“ofrenda”指墨西哥亡灵节期间在家中或墓地搭建的祭坛）</cb>。</p>
 <p>在对应的3.5版机密卷轴中，其摩斯密码词组<code>SILVER PIGMENT SECRET BYPRODUCT BYPRODUCT SECRET SILVER SILVER</code>，可以看出右侧是部分重复的词</p>
 <p>选择左侧的有效部分<kbd>SILVER PIGMENT SECRET BYPRODUCT</kbd>分别设为对应的cookie字段，即可进入<a href="#第二部分">第二部分</a>，下面是一个设置cookie的方法示例<cb>（输入<b style="color:#bc9567">&gt;</b>右侧的同行代码即可）</cb>：</p>
-<div class="language-"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang"></span><pre><!--::markdown-it-async::a4bddjsz4ncbebh1yjl8pe::--><code>&gt; console.log(document.cookie)
+<div class="language-"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang"></span><pre><!--::markdown-it-async::6qfh81sqlxpqbwlt969qzk::--><code>&gt; console.log(document.cookie)
 
 ofrenda1=; ofrenda2=; ofrenda3=; ofrenda4=
 
@@ -872,7 +872,7 @@ The Foundation utilized this research to train numerous highly disciplined and a
 <li><b style="color:#bc9567"><a href="#r1-3">role1-3</a></b>： <a href="https://re.bluepoch.com/stranger" target="_blank" rel="noreferrer">https://re.bluepoch.com/stranger</a></li>
 </ul>
 <p>同时图片后面还附加有下面的字符画：</p>
-<div class="language-"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang"></span><pre><!--::markdown-it-async::851jsatvpgxttmnpa35myc::--><code>................................................................................
+<div class="language-"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang"></span><pre><!--::markdown-it-async::9h3ys1jsuypce603lkpthn::--><code>................................................................................
 ................................................................................
 ................................................................................
 ................................................................................
@@ -1216,7 +1216,7 @@ The Foundation utilized this research to train numerous highly disciplined and a
 <p>如表格所示，符号本身排序形成了类似M的图样</p>
 <p>根据联想，符号对应逻各斯哲学中的5个基本概念，可以在<a href="https://kimgraaemunch.wordpress.com/2018/07/03/the-three-logoi-in-the-theosophical-tradition" target="_blank" rel="noreferrer">神智学传统中的三逻各斯</a>一文中找到前4个对应顺序如图R2-1 Ⅱ所示；并根据文章描述，十字代表演化的最后。<sup><a href="#ref2" id="ref2-src">[2]</a></sup></p>
 <p>得到顺序和对应幻方数字</p>
-<div class="language-"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang"></span><pre><!--::markdown-it-async::n56icagjdhgqj1wsctqini::--><code>◯  ⊙   ⊖  ⊕  ✚
+<div class="language-"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang"></span><pre><!--::markdown-it-async::6bvlqkenjk7cm07v9epkot::--><code>◯  ⊙   ⊖  ⊕  ✚
 07  40  11  32  44</code></pre>
 </div><figure style="float:right; clear:right; margin-left:1em">
 <img src="/img/重返未来：1999三周年ARG解谜活动缩略/200px-三周年ARG_Role2-1逻各斯哲学.webp" width="200">
@@ -1451,7 +1451,7 @@ The Foundation utilized this research to train numerous highly disciplined and a
 </tr>
 </WikiTable>
 <p>根据solfa密码对照表可以解出</p>
-<div class="language-"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang"></span><pre><!--::markdown-it-async::s75ynqoyslzy7wpftne1d::--><code>D1 F1 G1 C3 D3 A3
+<div class="language-"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang"></span><pre><!--::markdown-it-async::od9oarc3z9jayurij3i45::--><code>D1 F1 G1 C3 D3 A3
 I  S  E  R  C  L</code></pre>
 </div><p>这六个字母重排能得到的英文单词只有 <code>RELICS</code> 和 <code>SLICER</code>，可以通过尝试发现是 <kbd>RELICS</kbd>。将其填入网页后缀，得到:</p>
 <ul>
@@ -1588,7 +1588,7 @@ I  S  E  R  C  L</code></pre>
 <p><code>e4 c6 d4 d5 Nc3 dxe4 Nxe4 Nd7 Ng5 Ngf6 Bd3 e6 N1f3 h6 Nxe6 Qe7 O-O fxe6 Bg6+ Kd8 Bf4 b5 a4 Bb7 Re1 Nd5 Bg3 Kc8 axb5 cxb5 Qd3 Bc6 Bf5 exf5 Rxe7 Bxe7 c4</code></p>
 <p>这是1997年<a href="https://www.chessgames.com/perl/chessgame?gid=1070917" target="_blank" rel="noreferrer">卡斯帕罗夫和深蓝的收官之战</a>，比赛的具体日期是 1997 年 5 月 11 日，也刚好是图中标白的一个格子。</p>
 <p>在这场对局中发生了9次吃子</p>
-<div class="language-"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang"></span><pre><!--::markdown-it-async::vok4crwccf37efw3e0vr::--><code>第6步 dxe4 
+<div class="language-"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang"></span><pre><!--::markdown-it-async::g4o0w42taedw1gm0phghgj::--><code>第6步 dxe4 
 
 第7步 Nxe4 
 
@@ -1686,7 +1686,7 @@ password: We are attempting to survive our time so we may live into yours</code>
 <li>P0（脉冲周期时间，单位:s（秒））</li>
 <li>DIST（距离，单位：kpc（千秒差距））</li>
 </ul>
-<div class="language-"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang"></span><pre><!--::markdown-it-async::ri7eup7qfgddmpx6y5qlg::--><code>
+<div class="language-"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang"></span><pre><!--::markdown-it-async::kpaw14zwkhdnrjocftzu7r::--><code>
 --------------------------------------------------------------------------------------
 #     NAME                      Gl        P0                                    DIST 
                                 (deg)     (s)                                   (kpc)
