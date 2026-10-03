@@ -28,3 +28,7 @@ features:
     details:
     link: /follow
 ---
+
+<AfdianSupporters api-url="/api/supporters?limit=8" />
+
+---
