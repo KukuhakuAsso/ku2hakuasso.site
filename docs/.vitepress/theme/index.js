@@ -13,6 +13,7 @@ import CursorRevealedBackground from "./components/CursorRevealedBackground.vue"
 import WikiTable from "./components/WikiTable.vue";
 import ColumnList from "./components/ColumnList.vue";
 import Cb from "./components/Cb.vue";
+import AfdianSupporters from "./components/AfdianSupporters.vue";
 
 /** @type {import('vitepress').Theme} */
 export default {
@@ -33,6 +34,7 @@ export default {
     app.component("WikiTable", WikiTable);
     app.component("ColumnList", ColumnList);
     app.component("cb", Cb);
+    app.component("AfdianSupporters", AfdianSupporters);
     // —— 跨域名数据迁移：从旧域名通过 URL 参数 _migrate 携带数据迁移到新域名 ——
     // 确保只在客户端执行 (Vitepress 构建时也会跑这里，没有 window 对象会报错)
     if (typeof window !== "undefined") {

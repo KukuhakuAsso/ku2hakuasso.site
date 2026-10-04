@@ -60,6 +60,7 @@ export default defineConfig({
                 ],
             },
             { text: "关于空白", link: "/about" },
+            { text: "爱发电支持", link: "/supporters"},
         ],
 
         darkModeSwitchLabel: "夜间模式",
