@@ -61,7 +61,7 @@ jobs:
                   default_branch=$(gh repo view --json defaultBranchRef -q .defaultBranchRef.name 2>/dev/null || echo main)
                   echo "默认分支: ${default_branch}"
                   git fetch --quiet origin "$default_branch"
-                  branch="chore/sync-submodules-$(date -u +%Y%m%d)"
+                  branch="chore/sync-submodules"
                   existing_branch_sha=$(git ls-remote origin "refs/heads/$branch" | cut -f1)
                   git checkout -b "$branch" "origin/$default_branch"
                   git add -A
