@@ -17,10 +17,11 @@
 | ------------ | ------------- | -------------------------- |
 | 首页         | `/`         | 站点入口                   |
 | 博客         | `/blog/`    | 日志                       |
+| 公告         | `/announcements/` | 组内通知、活动发布与众筹公告 |
 | ARG 谜题档案 | `/puzzles/` | 谜题档案索引               |
 | 神秘学论文   | `/lore/`    | 神秘学研究文章             |
 | 解谜常用工具 | `/tools/`   | 工具索引                   |
-| 文章         | `/posts/`   | 谜题、论文、工具等正文内容 |
+| 文章         | `/posts/`   | 谜题、论文、工具和公告正文 |
 | 关于空白     | `/about`    | 组织介绍                   |
 | 关注         | `/follow`   | 关注方式                   |
 
@@ -55,7 +56,9 @@ Puzzle解谜游戏「TelemetryInstruments」，Vue 3 + Vite 构建的单页应�
 ├── .github/workflows/         # CI / 部署工作流
 ├── docs/                      # VitePress 主站
 │   ├── .vitepress/            # 站点配置与自定义主题
+│   ├── announcements/         # 公告列表页
 │   ├── posts/                 # 文章正文
+│   │   └── announcements/    # 公告正文
 │   ├── puzzles/ lore/ tools/  # 各栏目索引页
 │   └── public/                # 静态资源（图片、PDF 等）
 ├── vue-TelemetryInstruments/  # 子模块：解谜 SPA
@@ -63,6 +66,46 @@ Puzzle解谜游戏「TelemetryInstruments」，Vue 3 + Vite 构建的单页应�
 ├── scripts/                   # 构建与开发编排脚本
 ├── projects.json              # 子项目构建配置表
 └── dist-preview/              # 构建产物（已 gitignore）
+```
+
+## 公告板块
+
+公告板块用于发布组内通知、活动征稿、众筹说明和进度更新。入口位于顶部导航的「神秘学研究 → 公告」，访问路径为 `/announcements/`。
+
+- 公告列表页：`docs/announcements/index.md`。
+- 公告正文目录：`docs/posts/announcements/`。
+- 公告图片目录：`docs/public/img/`，在正文中使用 `/img/图片文件名.png` 引用；图片位于子目录时需写完整路径。
+
+列表会自动汇总 `announcements` 分类的文章，并按日期从新到旧排列。新增文章后无需手动编辑列表页。
+
+### 新增公告
+
+在 `docs/posts/announcements/` 下新建一个 Markdown 文件，例如 `公告标题.md`，按下面的格式填写：
+
+```markdown
+---
+title: "公告标题"
+date: 2026-10-04
+rss: true
+category: announcements
+hidden: false
+---
+
+# 公告标题
+
+在这里填写公告内容。
+```
+
+- `title` 填写公告标题，`date` 使用 `YYYY-MM-DD` 格式，列表按该日期排序。
+- `category` 统一填写 `announcements`，与列表页的分类一致。
+- `hidden: false` 表示在公告列表中显示；设置为 `true` 时从列表隐藏。
+- `rss: true` 表示加入 RSS 订阅；设置为 `false` 时不加入。`hidden` 与 RSS 开关分别控制。
+- 文件使用 UTF-8 编码保存，并以一个换行结束，满足 CI 的 Markdown 格式检查。
+
+安装依赖后，可运行以下命令在本地预览，并从导航进入公告页检查文章和图片：
+
+```bash
+pnpm run docs:dev
 ```
 
 ## 安装
