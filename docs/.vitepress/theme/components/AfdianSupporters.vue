@@ -5,7 +5,7 @@ import { getSupporters } from "../api/supportersApi.js";
 const props = defineProps({
   afdianUrl: {
     type: String,
-    default: "https://afdian.net/a/ku2hakuasso",
+    default: "https://afdian.com/a/mistargspringcele",
   },
   pageSize: {
     type: Number,
