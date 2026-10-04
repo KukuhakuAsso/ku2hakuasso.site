@@ -53,7 +53,7 @@ export default defineConfig({
             {
                 text: "神秘学研究",
                 items: [
-                    { text: "公告", link: "/announcements/" },
+                    { text: "公告", link: "/announcement/" },
                     { text: "ARG 谜题档案", link: "/puzzles/" },
                     { text: "神秘学论文", link: "/lore/" },
                     { text: "解谜常用工具", link: "/tools/" },
