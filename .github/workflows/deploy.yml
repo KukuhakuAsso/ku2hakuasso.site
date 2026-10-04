@@ -87,6 +87,8 @@ jobs:
               run: tar -czf site.tar.gz -C dist-preview .
 
             - name: Publish build release
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # gh CLI 不会自动使用 GITHUB_TOKEN，需显式指定
               run: |
                   gh release delete build-latest --yes --cleanup-tag || true
                   gh release create build-latest site.tar.gz \
