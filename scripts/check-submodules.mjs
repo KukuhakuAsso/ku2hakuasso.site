@@ -156,7 +156,12 @@ function main() {
                 }
             }
         } finally {
-            fs.rmSync(tmp, { recursive: true, force: true });
+            fs.rmSync(tmp, {
+                recursive: true,
+                force: true,
+                maxRetries: 5,
+                retryDelay: 100,
+            });
         }
 
         if (!ok) {
