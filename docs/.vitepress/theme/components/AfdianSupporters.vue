@@ -9,7 +9,7 @@ const props = defineProps({
   },
   pageSize: {
     type: Number,
-    default: 10,
+    default: 20,
   },
 });
 
@@ -99,7 +99,7 @@ const loadSupporters = async () => {
 
     records.value = response.records || [];
     totalCents.value = Number(response.totalCents || 0);
-    totalPages.value = Math.max(1, Number(response.totalPages || 1), Math.ceil(records.value.length / Math.max(props.pageSize, 1)));
+    totalPages.value = Math.max(1, Number(response.totalPages || 1));
   } catch (error) {
     console.warn("爱发电记录加载失败", error);
   } finally {
