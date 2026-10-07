@@ -1,6 +1,5 @@
 const API_SCF_BASE = import.meta.env.VITE_API_SCF_BASE;
-const request = async ({
-  url,
+const request = async (url, {
   method = "GET",
   params = {},
   headers = {},

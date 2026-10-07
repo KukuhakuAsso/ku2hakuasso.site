@@ -92,14 +92,16 @@ const loadSupporters = async () => {
   isLoading.value = true;
 
   try {
-    const response = await getSupporters({
-      page: currentPage.value,
-      pageSize: props.pageSize,
-    });
+    const response = await getSupporters();
 
-    records.value = response.records || [];
+    const allRecords = Array.isArray(response.records) ? response.records : [];
+    records.value = allRecords;
     totalCents.value = Number(response.totalCents || 0);
-    totalPages.value = Math.max(1, Number(response.totalPages || 1));
+    totalPages.value = Math.max(1, Math.ceil(allRecords.length / props.pageSize));
+
+    if (currentPage.value > totalPages.value) {
+      currentPage.value = totalPages.value;
+    }
   } catch (error) {
     console.warn("爱发电记录加载失败", error);
   } finally {
@@ -117,7 +119,6 @@ const goToPage = (page) => {
   }
 
   currentPage.value = page;
-  loadSupporters();
 };
 
 onMounted(() => {
