@@ -20,35 +20,6 @@ const totalPages = ref(1);
 const isLoading = ref(true);
 const toastVisible = ref(false);
 
-const fallbackRecords = [
-  { id: "演示_月下旅人", amountCents: 20000, supportedAt: "2026-10-03T19:42:08+08:00" },
-  { id: "演示_一只小白", amountCents: 3000, supportedAt: "2026-10-03T18:15:36+08:00" },
-  { id: "演示_远山", amountCents: 5000, supportedAt: "2026-10-03T17:03:21+08:00" },
-  { id: "演示_这个支持者的ID比较长_用于检查手机端完整换行_1234567890", amountCents: 1288, supportedAt: "2026-10-03T15:56:49+08:00" },
-  { id: "演示_星河", amountCents: 10000, supportedAt: "2026-10-03T12:24:05+08:00" },
-  { id: "演示_一只小白", amountCents: 1500, supportedAt: "2026-10-02T22:18:17+08:00" },
-  { id: "演示_纸飞机", amountCents: 6666, supportedAt: "2026-10-02T20:31:42+08:00" },
-  { id: "演示_北风", amountCents: 2000, supportedAt: "2026-10-02T18:47:09+08:00" },
-  { id: "演示_山海之间", amountCents: 8800, supportedAt: "2026-10-02T14:05:33+08:00" },
-  { id: "演示_青柠", amountCents: 1000, supportedAt: "2026-10-02T09:26:51+08:00" },
-  { id: "演示_月下旅人", amountCents: 5000, supportedAt: "2026-10-01T23:12:06+08:00" },
-  { id: "演示_晚灯", amountCents: 3000, supportedAt: "2026-10-01T21:39:28+08:00" },
-  { id: "演示_南岸", amountCents: 5200, supportedAt: "2026-10-01T19:08:54+08:00" },
-  { id: "演示_星河", amountCents: 2000, supportedAt: "2026-10-01T16:42:13+08:00" },
-  { id: "演示_没有名字的观众", amountCents: 999, supportedAt: "2026-10-01T13:55:47+08:00" },
-  { id: "演示_浅夏", amountCents: 10000, supportedAt: "2026-09-30T22:04:19+08:00" },
-  { id: "演示_纸飞机", amountCents: 3000, supportedAt: "2026-09-30T18:36:02+08:00" },
-  { id: "演示_行云", amountCents: 2500, supportedAt: "2026-09-30T12:11:38+08:00" },
-  { id: "演示_橘子汽水", amountCents: 1688, supportedAt: "2026-09-29T21:28:45+08:00" },
-  { id: "演示_远山", amountCents: 1000, supportedAt: "2026-09-29T17:49:07+08:00" },
-  { id: "演示_长夜微光", amountCents: 5000, supportedAt: "2026-09-29T09:34:26+08:00" },
-  { id: "演示_小满", amountCents: 600, supportedAt: "2026-09-28T23:07:14+08:00" },
-  { id: "演示_风铃", amountCents: 1888, supportedAt: "2026-09-28T19:52:31+08:00" },
-  { id: "演示_青柠", amountCents: 2000, supportedAt: "2026-09-28T14:16:58+08:00" },
-  { id: "演示_好好做作品", amountCents: 3000, supportedAt: "2026-09-27T20:45:03+08:00" },
-  { id: "演示_最初的支持", amountCents: 10000, supportedAt: "2026-09-27T08:30:12+08:00" },
-];
-
 const moneyFormat = new Intl.NumberFormat("zh-CN", {
   minimumFractionDigits: 2,
   maximumFractionDigits: 2,
@@ -128,18 +99,9 @@ const loadSupporters = async () => {
 
     records.value = response.records || [];
     totalCents.value = Number(response.totalCents || 0);
-    totalPages.value = Math.max(1, Number(response.totalPages || 1));
+    totalPages.value = Math.max(1, Number(response.totalPages || 1), Math.ceil(records.value.length / Math.max(props.pageSize, 1)));
   } catch (error) {
-    console.warn("爱发电记录加载失败，使用兜底数据", error);
-    records.value = fallbackRecords;
-    totalCents.value = fallbackRecords.reduce(
-      (sum, record) => sum + Number(record.amountCents || 0),
-      0,
-    );
-    totalPages.value = Math.max(
-      1,
-      Math.ceil(fallbackRecords.length / Math.max(props.pageSize, 1)),
-    );
+    console.warn("爱发电记录加载失败", error);
   } finally {
     isLoading.value = false;
   }
