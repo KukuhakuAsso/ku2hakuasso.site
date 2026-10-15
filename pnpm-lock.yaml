@@ -56,6 +56,19 @@ importers:
         specifier: ^8.2.0
         version: 8.2.1
 
+  vue-ku2hakuasso-admin:
+    dependencies:
+      vue:
+        specifier: ^3.5.40
+        version: 3.5.41
+    devDependencies:
+      '@vitejs/plugin-vue':
+        specifier: ^6.0.6
+        version: 6.0.8(vite@8.2.1)(vue@3.5.41)
+      vite:
+        specifier: ^8.2.0
+        version: 8.2.1
+
   vue-mistarg2anns:
     dependencies:
       vue:

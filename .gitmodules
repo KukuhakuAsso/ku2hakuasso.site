@@ -6,3 +6,7 @@
 	path = vue-TelemetryInstruments
 	url = ../telemetry-instruments.git
 	branch = main
+[submodule "vue-ku2hakuasso-admin"]
+	path = vue-ku2hakuasso-admin
+	url = ../ku2hakuasso-admin.git
+	branch = main

@@ -22,5 +22,15 @@
             "/api-mist"
         ],
         "enabled": true
+    },
+    {
+        "enabled": true,
+        "name": "ku2hakuasso-admin",
+        "dir": "vue-ku2hakuasso-admin",
+        "buildCmd": "pnpm run build",
+        "outputDir": "output",
+        "subPath": "admin",
+        "devPort": 5177,
+        "proxyApi": []
     }
 ]

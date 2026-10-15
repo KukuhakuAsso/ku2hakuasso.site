@@ -2,6 +2,7 @@ packages:
   - '.' # 根目录自身
   - 'vue-TelemetryInstruments' # 子项目路径
   - 'vue-mistarg2anns'
+  - 'vue-ku2hakuasso-admin'
 allowBuilds:
   esbuild: false
   sharp: false
