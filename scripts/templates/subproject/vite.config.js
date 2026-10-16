@@ -26,16 +26,19 @@ export default defineConfig(({ mode }) => {
 
     // 代理目标统一从环境变量读取（.env.development / .env.development.local）
     const proxyTarget = env.API_PROXY_TARGET;
-    const proxyRewrite = env.API_PROXY_REWRITE === "true";
+    const proxyRewriteTo = env.API_PROXY_REWRITE_TO;
 
     const proxy = {};
     for (const prefix of proxyApi) {
         proxy[prefix] = {
             target: proxyTarget,
             changeOrigin: true,
-            ...(proxyRewrite && {
+            ...(proxyRewriteTo !== undefined && {
                 rewrite: (p) =>
-                    p.replace(new RegExp(`^${escapeRegExp(prefix)}`), ""),
+                    p.replace(
+                        new RegExp(`^${escapeRegExp(prefix)}`),
+                        proxyRewriteTo,
+                    ),
             }),
         };
     }
