@@ -255,7 +255,7 @@ pnpm run new:project MyGame --local --subpath MyGame
 
 - 若 `--url` 使用相对 URL（如 `../mygame.git`），`git submodule add` 会基于主仓库的远程地址自动解析出同账号/组织下的子仓库地址；
 - 子项目的 `vite.config.js` 会自动从 `projects.json` 读取 `base`、`port`、`proxyApi`、`outputDir`，无需手动配置；
-- 代理目标通过子项目内的 `.env.development` 配置（模板中为 `API_PROXY_TARGET` / `API_PROXY_REWRITE`）；
+- 代理目标通过各子项目自己的 `.env.development` 配置（模板中为 `API_PROXY_TARGET`，可选的 `API_PROXY_REWRITE_TO` 用于指定替换后的路径前缀；设为空值可移除原前缀）；需经主站访问的 API 前缀必须在 `projects.json` 中唯一，避免不同子项目的代理配置互相覆盖；
 - 子模块内部更新后，在主仓库执行 `pnpm run submodules:update` 同步子模块指针（见上文「子模块同步」）。
 
 `projects.json` 字段说明：

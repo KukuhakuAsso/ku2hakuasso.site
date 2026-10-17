@@ -32,7 +32,7 @@
         "subPath": "admin",
         "devPort": 5177,
         "proxyApi": [
-            "/api-mist"
+            "/api-admin"
         ]
     }
 ]
