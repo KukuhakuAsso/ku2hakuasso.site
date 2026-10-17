@@ -1,0 +1,1 @@
+import{a as e,r as t}from"./http-CWMy_-QN.js";var n=()=>t(`/admin/stats`),r=t=>e(`/admin/contest/start-at`,t),i=()=>e(`/admin/maintenance/settle-tips`),a=()=>e(`/admin/maintenance/recheck-milestones`);export{i,a as n,r,n as t};
