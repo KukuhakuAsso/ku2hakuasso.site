@@ -34,6 +34,7 @@ export default [
         AudioContext: "readonly",
         URL: "readonly",
         URLSearchParams: "readonly",
+        XMLHttpRequest: "readonly",
         Blob: "readonly",
         CustomEvent: "readonly",
         customElements: "readonly",
