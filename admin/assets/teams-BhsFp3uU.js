@@ -1,1 +1,0 @@
-import{a as e,c as t}from"./http-Vo4-QG9W.js";var n=t=>e(`/admin/teams`,t),r=(e,n)=>t(`/admin/teams/${e}/warn`,n),i=(e,n)=>t(`/admin/teams/${e}/ban`,n),a=e=>t(`/admin/teams/${e}/unban`),o=(e,n)=>t(`/admin/teams/${e}/name`,n),s=e=>t(`/admin/teams/${e}/dissolve`);export{a,o as i,s as n,r as o,n as r,i as t};
