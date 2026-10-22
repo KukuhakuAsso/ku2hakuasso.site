@@ -1,0 +1,1 @@
+import{a as e,c as t}from"./http-Vo4-QG9W.js";var n=()=>e(`/admin/stats`),r=e=>t(`/admin/contest/start-at`,e),i=()=>t(`/admin/maintenance/settle-tips`),a=()=>t(`/admin/maintenance/recheck-milestones`);export{i,a as n,r,n as t};
