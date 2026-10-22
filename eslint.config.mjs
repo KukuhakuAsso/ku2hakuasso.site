@@ -35,6 +35,8 @@ export default [
         URL: "readonly",
         URLSearchParams: "readonly",
         Blob: "readonly",
+        customElements: "readonly",
+        TextEncoder: "readonly",
         FileReader: "readonly",
         atob: "readonly",
         btoa: "readonly",
