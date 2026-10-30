@@ -1,1 +1,0 @@
-import{a as e,l as t}from"./http-DVZMYybO.js";var n=()=>e(`/admin/puzzles`),r=(e,n)=>t(`/admin/puzzles/${e}`,n);export{r as n,n as t};
