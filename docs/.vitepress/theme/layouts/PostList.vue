@@ -1,6 +1,6 @@
 <template>
     <div class="post-list">
-        <a v-for="(post, index) in filteredPosts" :key="post.url" :href="post.url" class="post-item"
+        <a v-for="(post, index) in filteredPosts" :key="post.url" :href="withBase(post.url)" class="post-item"
             :style="{ '--post-delay': `${index * 100}ms` }">
             <span class="date">{{ post.date }}</span>
             <span class="title">{{ post.title }}</span>
@@ -14,6 +14,7 @@
 
 <script setup>
 import { computed } from 'vue'
+import { withBase } from 'vitepress'
 import { data as allPosts } from '@scripts/posts.data.mjs'
 
 // 定义外部传入的参数，使用户可以指定要渲染的分类
