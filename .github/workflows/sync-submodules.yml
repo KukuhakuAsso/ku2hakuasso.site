@@ -65,6 +65,12 @@ jobs:
                   existing_branch_sha=$(git ls-remote origin "refs/heads/$branch" | cut -f1)
                   git checkout -b "$branch" "origin/$default_branch"
                   git add -A
+                  # 复检：main 可能在本次运行期间已包含同样的更新（人工直接提交或合并过 PR），
+                  # 此时 checkout 到最新 main 后改动会消失，直接 commit 会因空提交失败
+                  if git diff --quiet --cached; then
+                    echo "更新已在 ${default_branch} 上，无需创建 PR"
+                    exit 0
+                  fi
                   git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'chore: sync submodules'
                   # 守卫：校验新 gitlink 位于 main/master，失败则中止（不推送、不建 PR）
                   node scripts/check-submodules.mjs
