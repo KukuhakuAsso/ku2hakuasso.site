@@ -37,13 +37,17 @@ const dynamicDescription =
     process.env.RSS_DESCRIPTION || pkg.RSS_DESCRIPTION || "默认博客描述";
 
 const hostname = "https://kukuhakuasso.github.io/";
+// 个人仓库 Pages 使用子路径，正式站点默认仍部署在根目录。
+const siteBase = process.env.VITEPRESS_BASE || "/";
+const siteOrigin = process.env.VITEPRESS_SITE_URL || pkg.baseUrl || hostname;
 
 export default defineConfig({
+    base: siteBase,
     title: dynamicTitle,
     description: dynamicDescription,
     head: [
-        ["link", { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" }],
-        ["link", { rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
+        ["link", { rel: "icon", type: "image/svg+xml", href: `${siteBase}favicon.svg` }],
+        ["link", { rel: "icon", type: "image/x-icon", href: `${siteBase}favicon.ico` }],
     ],
     themeConfig: {
         // https://vitepress.dev/reference/default-theme-config
@@ -81,13 +85,13 @@ export default defineConfig({
         plugins: [
             RssPlugin({
                 title: dynamicTitle,
-                baseUrl: pkg.baseUrl || hostname,
+                baseUrl: siteOrigin,
                 description: dynamicDescription || "自动生成的描述",
                 filename: "feed.xml",
                 filter: (page) => {
                     // 仅当页面路由以 /posts/ 且没有显式设置 rss: false 开头时才包含在 RSS 中
                     return (
-                        page.url.startsWith("/posts/") &&
+                        page.url.startsWith(`${siteBase}posts/`) &&
                         page.frontmatter.rss !== false
                     );
                 },

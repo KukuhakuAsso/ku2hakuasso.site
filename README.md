@@ -5,6 +5,16 @@
 - 镜像网页(暂时为跳转链接)：[KukuhakuAsso.github.io](https://KukuhakuAsso.github.io)
 - 官网：[www.ku2hakuasso.site](https://www.ku2hakuasso.site)
 
+## 个人仓库在线预览
+
+- [打开主站预览](https://shiziyueyuan.github.io/ku2hakuasso.site/)
+- [打开 ARG 谜题档案](https://shiziyueyuan.github.io/ku2hakuasso.site/puzzles/)
+- [阅读 PoorerArt ARG](https://shiziyueyuan.github.io/ku2hakuasso.site/posts/puzzle/PoorerArt-ARG.html)
+
+`shiziyueyuan/ku2hakuasso.site` 的 `main` 分支更新主站文章或配置后，`Repository Preview` 工作流会自动更新 GitHub Pages，也可在 Actions 中手动运行。预览构建主站文档，不依赖游戏子模块；游戏仍可通过正式站点的现有入口访问。
+
+预览使用仓库子路径 `/ku2hakuasso.site/`。本地运行与正式站点继续默认使用根路径；需要复现预览构建时，可设置 `VITEPRESS_BASE` 和 `VITEPRESS_SITE_URL`。
+
 ## 项目构成
 
 本项目是 pnpm monorepo，包含一个 VitePress 主站与两个 Git 子模块项目。
