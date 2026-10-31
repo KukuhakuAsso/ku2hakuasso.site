@@ -1,1 +1,0 @@
-import{a as e,c as t}from"./http-DVZMYybO.js";var n=t=>e(`/admin/players`,t),r=t=>e(`/admin/players/${t}/contact`),i=(t,n)=>e(`/admin/players/${t}/usernames`,n),a=(e,n)=>t(`/admin/players/${e}/warn`,n),o=(e,n)=>t(`/admin/players/${e}/ban`,n),s=e=>t(`/admin/players/${e}/unban`),c=(e,n)=>t(`/admin/players/${e}/username`,n);export{c as a,n as i,r as n,s as o,i as r,a as s,o as t};
