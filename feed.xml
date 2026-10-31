@@ -4,7 +4,7 @@
         <title>空白解谜组</title>
         <link>https://www.ku2hakuasso.site/</link>
         <description>空白永不败北</description>
-        <lastBuildDate>Sat, 31 Oct 2026 17:35:06 GMT</lastBuildDate>
+        <lastBuildDate>Sat, 31 Oct 2026 17:58:37 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <item>
@@ -25,15 +25,15 @@
 <p>欢迎各位研究员们到此交流。我是哑谜。在拉普拉斯科算中心的支持下，我们与空白解谜组合作推出《拉普拉斯谜题小课堂》，希望带大家了解更多解谜知识，发现谜题的乐趣。本期，我们先来了解 PoorerArt ARG。</p>
 <h2 id="一、签名与隐藏的求救信号" tabindex="-1">一、签名与隐藏的求救信号 <a class="header-anchor" href="#一、签名与隐藏的求救信号" aria-label="Permalink to “一、签名与隐藏的求救信号”">&#8203;</a></h2>
 <p>先看账号的签名：</p>
-<div class="language-text"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">text</span><pre><!--::markdown-it-async::bcqw133h0u4auvq6yopm28::--><code>An original game on Patreon, Fqpv nkuvgp vq jko</code></pre>
+<div class="language-text"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">text</span><pre><!--::markdown-it-async::5ykyxq94x8cx1jheg18l2::--><code>An original game on Patreon, Fqpv nkuvgp vq jko</code></pre>
 </div><p>前半句很正常——“Patreon 上的一个原创游戏”。后半句却像随手打出的乱码。不过，乱码不会乱得这么整齐：单词之间留有空格，字母也都来自普通的英文字母表。</p>
 <p>把每个字母在字母表中向前回退两位，<code>F</code> 变成 <code>D</code>，<code>q</code> 变成 <code>o</code>，就能得到：</p>
-<div class="language-text"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">text</span><pre><!--::markdown-it-async::27jlhihvb87ieooat9ejfn::--><code>Fqpv nkuvgp vq jko
+<div class="language-text"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">text</span><pre><!--::markdown-it-async::vq4z4dn90qm8ecf6n4r1qh::--><code>Fqpv nkuvgp vq jko
 Dont listen to him</code></pre>
 </div><p>这就是凯撒密码：对字母使用固定的循环移位。这里的解码偏移为 −2，越过 <code>a</code> 时从字母表末尾继续计算。原串没有撇号，严格解码结果也是 <code>Dont</code>；按自然英语理解，就是“Don't listen to him”——<strong>别听他的。</strong></p>
 <p>一个作者，在自己游戏的宣传位上警告访客“别听他的”。可账号的主人，不就是作者自己吗？</p>
 <p>再看那张写着“Poorer Art”的涂鸦小人图。手绘小人、一片温馨，仿佛能看到一位慈祥的老奶奶。但仔细检查原图、增强局部对比后，小人脚下会显出一行极淡的黄色文字：</p>
-<div class="language-text"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">text</span><pre><!--::markdown-it-async::j5hbtl66vfhjy24w5pig1b::--><code>HELP ME</code></pre>
+<div class="language-text"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">text</span><pre><!--::markdown-it-async::7s5mwc7lxv6pc3ds0a8gvn::--><code>HELP ME</code></pre>
 </div><p>救救我。</p>
 <p>这里并不是从无到有画出一句求救，也不是把图片里的字母换成另一套字母，而是让源图中已经存在的低对比信息显现出来。对白底上的淡黄色文字，单纯提高整幅图片亮度未必有效，还要观察颜色和背景之间的差别。</p>
 <p>求救信号不在帖子深处。它从页面的最顶端，就已经开始了。</p>
@@ -46,14 +46,14 @@ Dont listen to him</code></pre>
 </blockquote>
 <p>一个游戏角色，在作者的账号上直接发言。他说，现在 P 消失了，他终于有时间找出秘密，建造自己的逃生通道。但这并不容易，因为“他”还在附近。</p>
 <p>此外，另一篇帖子只有一行字：</p>
-<div class="language-text"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">text</span><pre><!--::markdown-it-async::vyzyfeiunmniqj9dcyfq2h::--><code>ALL LIES.</code></pre>
+<div class="language-text"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">text</span><pre><!--::markdown-it-async::xir0fcq1w3nbo2605i5l8::--><code>ALL LIES.</code></pre>
 </div><p>都是谎言。</p>
 <p>P、马可，还有那个“他”。一个账号，三套声线，阿莱夫来了都得先确认一下这里有没有自己的工位。</p>
 <p>通过阅读帖子，我们可以辨认出两位主要角色：马可（Marco）和布兰登（Brendan）。马可明显试图跳出帖子本身，向屏幕外的读者传递额外信息。至于布兰登……我们先记住这个名字。</p>
 <p>他们是谁？和作者是什么关系？那场反复被提及的“悲剧”又是什么？帖子没有直接给出答案。部分信息使用 Base64、ASCII、摩斯、盲文或凯撒密码等方式处理；这些方式的原理并不相同，也不能一概称为加密。接下来，我们只展开与主要解谜流程有关的部分。</p>
 <h2 id="三、游戏文件与-dontreadme" tabindex="-1">三、游戏文件与 DONTReadMe <a class="header-anchor" href="#三、游戏文件与-dontreadme" aria-label="Permalink to “三、游戏文件与 DONTReadMe”">&#8203;</a></h2>
 <p>解压游戏文件后，会得到三个 ZIP 压缩包和一份文本：</p>
-<div class="language-text"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">text</span><pre><!--::markdown-it-async::4pn4ml2bfeep07yhu2p9yh::--><code>Past.zip
+<div class="language-text"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">text</span><pre><!--::markdown-it-async::xh8cg8euoh8abgy6661tf::--><code>Past.zip
 PoorerArt.zip
 Visualizer.zip
 DONTReadMe.txt</code></pre>
@@ -64,7 +64,7 @@ DONTReadMe.txt</code></pre>
 <p>不知道该做什么？那你大概应该去看看我的 Patreon……</p>
 </blockquote>
 <p>随后是一长串八位一组的二进制数。把每组二进制转换成数值，再按 ASCII 字符表查找，就能还原文字。例如：</p>
-<div class="language-text"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">text</span><pre><!--::markdown-it-async::3hcrc9plzel4bga67k7lal::--><code>01000001 → 64 + 1 = 65 → A
+<div class="language-text"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">text</span><pre><!--::markdown-it-async::pyodj18iokbkmxks19j88f::--><code>01000001 → 64 + 1 = 65 → A
 01101110 → 64 + 32 + 8 + 4 + 2 = 110 → n</code></pre>
 </div><p>需要区分的是：ASCII 本身是七位字符编码，这里用最高位为零的八位字节表示它，并不意味着 ASCII 本身变成了八位编码。<a href="https://www.rfc-editor.org/rfc/rfc20.html" target="_blank" rel="noreferrer">RFC 20</a> 也采用了这种表示方式。</p>
 <p>逐组转换后，警告显现出来：</p>
@@ -75,11 +75,11 @@ DONTReadMe.txt</code></pre>
 <p>第二次警告，第二次被强调的“他”。签名里说“别听他的”，说明书里说“他在看着”。这个故事究竟还隐藏着什么？</p>
 <h2 id="四、感谢文本里的-base64" tabindex="-1">四、感谢文本里的 Base64 <a class="header-anchor" href="#四、感谢文本里的-base64" aria-label="Permalink to “四、感谢文本里的 Base64”">&#8203;</a></h2>
 <p>购买游戏还会得到一份感谢文本，其中有这样一串字符：</p>
-<div class="language-text"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">text</span><pre><!--::markdown-it-async::3zeattet8noywl1zcbel7l::--><code>VGhhbmsgeW91ISBOb3cgcGxlYXNlLCBoZWxwIG1lIQ==</code></pre>
+<div class="language-text"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">text</span><pre><!--::markdown-it-async::povhfrjy5jl7fua4z0vl::--><code>VGhhbmsgeW91ISBOb3cgcGxlYXNlLCBoZWxwIG1lIQ==</code></pre>
 </div><p>大小写字母、数字、规整的长度，以及结尾的 <code>==</code>，都提示我们尝试 Base64 解码。</p>
 <p>Base64 使用 64 个符号表示六位数值，把四个符号表示的 24 位重新分成三个八位字节，再还原原始数据。标准字母表还包含 <code>+</code> 和 <code>/</code>；结尾的 <code>=</code> 用于补位，但不是每一串 Base64 都需要等号。具体规则见 <a href="https://www.rfc-editor.org/rfc/rfc4648.html" target="_blank" rel="noreferrer">RFC 4648</a>。</p>
 <p>以前四个字符为例：</p>
-<div class="language-text"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">text</span><pre><!--::markdown-it-async::aaaeli6hzocc70cw6zpbvo::--><code>V      G      h      h
+<div class="language-text"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">text</span><pre><!--::markdown-it-async::b9lgyjndtoicev6x5z6z8::--><code>V      G      h      h
 21     6      33     33
 010101 000110 100001 100001
 
@@ -95,35 +95,35 @@ T        h        a</code></pre>
 <p>接下来，打开唯一能直接解压的 Visualizer。这是一个视角解谜小游戏：场景中散落着看似毫无规律的碎片，需要转动视角、缩放画面，把它们对齐到特定角度。</p>
 <p>对齐成功的一瞬间，混乱的色块会拼成完整图案，其中包括粉色西瓜；画面里还会出现用于后续解谜的字母组。</p>
 <p>按现有解谜资料，五关得到的字符串依次为：</p>
-<div class="language-text"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">text</span><pre><!--::markdown-it-async::shrc5bvcyfnydwtf6hum::--><code>WAT / ORE / LONS / ERME / NOM</code></pre>
+<div class="language-text"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">text</span><pre><!--::markdown-it-async::31gl0wfcepvay8kgvpxyd::--><code>WAT / ORE / LONS / ERME / NOM</code></pre>
 </div><p>按关卡顺序拼接：</p>
-<div class="language-text"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">text</span><pre><!--::markdown-it-async::4fxkh6kizs6ct0vvnnn41o::--><code>WATORELONSERMENOM</code></pre>
+<div class="language-text"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">text</span><pre><!--::markdown-it-async::yn06pvo4nwcnmtu3gao09::--><code>WATORELONSERMENOM</code></pre>
 </div><p>它看起来像乱码，但若尝试字母重排，就能得到一句符合这些字母数量的英语：</p>
-<div class="language-text"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">text</span><pre><!--::markdown-it-async::yavge5rdwrphvwq1zm92::--><code>NO MORE WATERMELONS</code></pre>
+<div class="language-text"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">text</span><pre><!--::markdown-it-async::ifrs8677cjbrc33ggwylj::--><code>NO MORE WATERMELONS</code></pre>
 </div><p>没有更多西瓜了。</p>
 <p>这里有一个容易漏掉的细节：原串共有 <strong>17 个字母</strong>，所以结尾必须保留复数 <code>S</code>。单数 <code>NO MORE WATERMELON</code> 只有 16 个字母，不能算作完整重排。复数句与原串的字母及其出现次数完全相同；这里将它作为可复验的重排示例，不额外断言这是作者正式公布的标准谜底。</p>
 <p>于是玩家一路找西瓜、抄字母、拼字符串，最后得到的短句庄严宣布：没有更多西瓜了。很好，世界观没推进，人物没解释，但至少现在我们对西瓜库存有了学术结论。</p>
 <p>真正用于解锁的，是按关卡顺序排列的原串：</p>
-<div class="language-text"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">text</span><pre><!--::markdown-it-async::frxkella0buoys6nha2lr::--><code>PoorerArt.zip 的密码：WATORELONSERMENOM</code></pre>
+<div class="language-text"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">text</span><pre><!--::markdown-it-async::72c65eu7q59v8ahrb3cna8::--><code>PoorerArt.zip 的密码：WATORELONSERMENOM</code></pre>
 </div><p>英语重排句帮助我们理解字母，<strong>不能拿它替代实际解压密码</strong>。</p>
 <h2 id="六、past-用-爱-锁住-过去" tabindex="-1">六、Past：用“爱”锁住“过去” <a class="header-anchor" href="#六、past-用-爱-锁住-过去" aria-label="Permalink to “六、Past：用“爱”锁住“过去””">&#8203;</a></h2>
 <p>第一道门开了。第二道门的钥匙，仍然藏在 Patreon。</p>
 <p>有一篇名为 Don't Read——“别读”——的帖子，包含这段字符：</p>
-<div class="language-text"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">text</span><pre><!--::markdown-it-async::2r4kn45lgm8eg6b3atq4hv::--><code>VGhlIGxldHRlcnMgZm9ybSB0aGUgcGFzc3dvcmQgZm9yIHRoZSBzZWNyZXQgZmlsZXM=</code></pre>
+<div class="language-text"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">text</span><pre><!--::markdown-it-async::98048fp4hm1l80cyk8zio::--><code>VGhlIGxldHRlcnMgZm9ybSB0aGUgcGFzc3dvcmQgZm9yIHRoZSBzZWNyZXQgZmlsZXM=</code></pre>
 </div><p>同样使用 Base64 解码，得到：</p>
 <blockquote>
 <p>The letters form the password for the secret files</p>
 <p>这些字母组成了秘密文件的密码。</p>
 </blockquote>
 <p>哪些字母？线索指向这篇帖子所属的合集 <code>We3k 3</code>，也就是第三周。根据现有解谜资料，合集里的四张图片分别藏着 <code>L</code>、<code>O</code>、<code>V</code>、<code>E</code>，组合起来是：</p>
-<div class="language-text"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">text</span><pre><!--::markdown-it-async::5jh0n0c3s0j0o1dshy0pob::--><code>LOVE</code></pre>
+<div class="language-text"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">text</span><pre><!--::markdown-it-async::6nhhjj2wwk6wtsf0k6ttsn::--><code>LOVE</code></pre>
 </div><p>爱。这就是 <code>Past.zip</code> 的密码。</p>
 <p>设计者用“爱”锁住了“过去”。请记住这个修辞，它与后面的线索遥相呼应。</p>
 <h2 id="七、悔恨与羞耻" tabindex="-1">七、悔恨与羞耻 <a class="header-anchor" href="#七、悔恨与羞耻" aria-label="Permalink to “七、悔恨与羞耻”">&#8203;</a></h2>
 <p>打开 Past 后，里面有五份文件。按照文件名顺序，把各文件标红的字母排列起来，得到：</p>
-<div class="language-text"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">text</span><pre><!--::markdown-it-async::cv20r8jhh8cjdl48z5xvo::--><code>mzbmzoviyncvhz</code></pre>
+<div class="language-text"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">text</span><pre><!--::markdown-it-async::22bh6v1lgr9ellldtz3h4::--><code>mzbmzoviyncvhz</code></pre>
 </div><p>还记得签名的手法吗？这里同样可以使用凯撒移位，但<strong>偏移与签名不同</strong>：不是回退两位，而是前进五位；回退 21 位与前进五位在 26 字母循环中等价。</p>
-<div class="language-text"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">text</span><pre><!--::markdown-it-async::qc0vu525bfd7bflo8egn9n::--><code>m → r
+<div class="language-text"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">text</span><pre><!--::markdown-it-async::lz4v0kx3o8rkuag7hc3tl::--><code>m → r
 z → e
 b → g
 
@@ -141,7 +141,7 @@ mzbmzoviyncvhz → regretandshame</code></pre>
 </blockquote>
 <p>“过去”——Past，那个用“爱”打开的文件夹。它留下的十四个字母，现在有了新的用途。</p>
 <p>这时，在拼图页面输入字母，会得到正确或错误的音效反馈。按原顺序键入：</p>
-<div class="language-text"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">text</span><pre><!--::markdown-it-async::ytfuom5r44pr1gujrae2xh::--><code>mzbmzoviyncvhz</code></pre>
+<div class="language-text"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">text</span><pre><!--::markdown-it-async::434321ilhkbou1joy5t60d::--><code>mzbmzoviyncvhz</code></pre>
 </div><p>注意，输入的仍是<strong>原始十四字母</strong>，不是解码后的 <code>regretandshame</code>。完成输入后，再点击拼图碎片，碎片就会消失，循环终结，关卡跳过。</p>
 <p>说得文艺一点，这是让玩家直面过去；说得直白一点，就是先用十四个字母把人折腾半天，再告诉你“答案其实一直在你键盘上”。要打破现在的僵局，关键在于把过去找到的信息真正带进游戏。</p>
 <h2 id="九、删除囚笼-解救灵魂" tabindex="-1">九、删除囚笼，解救灵魂 <a class="header-anchor" href="#九、删除囚笼-解救灵魂" aria-label="Permalink to “九、删除囚笼，解救灵魂”">&#8203;</a></h2>
@@ -156,7 +156,7 @@ mzbmzoviyncvhz → regretandshame</code></pre>
 </blockquote>
 <p>等等。布兰登？那个亲手重置拼图、把所有人锁进循环里的布兰登，现在居然开始道谢了？这完全不亚于纵火犯站在消防车旁边鞠躬致谢，情绪价值给得很足，责任是一点没少。</p>
 <p>更妙的是，信的末尾还留着一行点与划。按<a href="https://www.itu.int/dms_pubrec/itu-r/rec/m/R-REC-M.1677-1-200910-I!!PDF-E.pdf" target="_blank" rel="noreferrer">国际摩斯字母表</a>逐组解码：</p>
-<div class="language-text"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">text</span><pre><!--::markdown-it-async::8ch582wf6nteljvxqtdc1::--><code>..- -. - .. .-.. / -. . -..- - / - .. -- .
+<div class="language-text"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">text</span><pre><!--::markdown-it-async::mrhv39fynel1xllgyw58t::--><code>..- -. - .. .-.. / -. . -..- - / - .. -- .
 U   N  T I  L     N  E X    T   T I  M  E
 
 UNTIL NEXT TIME</code></pre>

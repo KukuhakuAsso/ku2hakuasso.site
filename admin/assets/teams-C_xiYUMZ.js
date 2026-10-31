@@ -1,1 +1,0 @@
-import{l as e,o as t}from"./http-BSfTzZhS.js";var n=e=>t(`/admin/teams`,e),r=(t,n)=>e(`/admin/teams/${t}/warn`,n),i=(t,n)=>e(`/admin/teams/${t}/ban`,n),a=t=>e(`/admin/teams/${t}/unban`),o=(t,n)=>e(`/admin/teams/${t}/name`,n),s=t=>e(`/admin/teams/${t}/dissolve`);export{a,o as i,s as n,r as o,n as r,i as t};

@@ -1,0 +1,1 @@
+import{l as e,o as t}from"./http-B3FzHI78.js";var n=()=>t(`/admin/stats`),r=t=>e(`/admin/contest/start-at`,t),i=()=>e(`/admin/maintenance/settle-tips`),a=()=>e(`/admin/maintenance/recheck-milestones`);export{i,a as n,r,n as t};

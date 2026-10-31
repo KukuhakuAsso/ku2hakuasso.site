@@ -1,0 +1,1 @@
+import{l as e,o as t}from"./http-B3FzHI78.js";var n=e=>t(`/admin/players`,e),r=e=>t(`/admin/players/${e}/contact`),i=(e,n)=>t(`/admin/players/${e}/usernames`,n),a=(t,n)=>e(`/admin/players/${t}/warn`,n),o=(t,n)=>e(`/admin/players/${t}/ban`,n),s=t=>e(`/admin/players/${t}/unban`),c=(t,n)=>e(`/admin/players/${t}/username`,n);export{c as a,n as i,r as n,s as o,i as r,a as s,o as t};

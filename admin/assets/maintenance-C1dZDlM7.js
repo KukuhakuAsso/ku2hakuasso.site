@@ -1,1 +1,0 @@
-import{l as e,o as t}from"./http-BSfTzZhS.js";var n=()=>t(`/admin/stats`),r=t=>e(`/admin/contest/start-at`,t),i=()=>e(`/admin/maintenance/settle-tips`),a=()=>e(`/admin/maintenance/recheck-milestones`);export{i,a as n,r,n as t};
