@@ -52,7 +52,7 @@ jobs:
               uses: actions/configure-pages@v6
 
             - name: Install dependencies
-              run: pnpm install --frozen-lockfile --ignore-workspace
+              run: pnpm install --frozen-lockfile --ignore-workspace --ignore-scripts
 
             - name: Build documentation preview
               env:
