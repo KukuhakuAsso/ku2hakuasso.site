@@ -1,0 +1,1 @@
+import{c as e,f as t}from"./http-YHdUUu4t.js";var n=(e,n)=>t(`/admin/players/${e}/mute`,n),r=(e,n)=>t(`/admin/teams/${e}/mute`,n),i=e=>t(`/admin/players/${e}/unmute`),a=e=>t(`/admin/teams/${e}/unmute`),o=t=>e(`/admin/mutes`,t),s=t=>e(`/admin/banneds`,t),c=(e,n,r)=>t(`/admin/appeals/${e}/${n}/reply`,r);export{c as a,r as i,o as n,i as o,n as r,a as s,s as t};

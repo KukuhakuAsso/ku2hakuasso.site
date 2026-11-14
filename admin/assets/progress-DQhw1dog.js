@@ -1,0 +1,1 @@
+import{c as e}from"./http-YHdUUu4t.js";var t=t=>e(`/admin/progress/teams`,t),n=t=>e(`/admin/progress/team/${t}`),r=(t,n)=>e(`/admin/progress/matrix`,t,n),i=t=>e(`/admin/progress/submissions`,t);export{i,n,t as r,r as t};

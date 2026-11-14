@@ -1,0 +1,1 @@
+import{c as e,f as t}from"./http-YHdUUu4t.js";var n=t=>e(`/admin/teams`,t),r=(e,n)=>t(`/admin/teams/${e}/warn`,n),i=(e,n)=>t(`/admin/teams/${e}/ban`,n),a=e=>t(`/admin/teams/${e}/unban`),o=(e,n)=>t(`/admin/teams/${e}/name`,n),s=e=>t(`/admin/teams/${e}/dissolve`);export{a,o as i,s as n,r as o,n as r,i as t};
