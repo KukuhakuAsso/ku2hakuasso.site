@@ -35,6 +35,8 @@ export default [
         URL: "readonly",
         URLSearchParams: "readonly",
         XMLHttpRequest: "readonly",
+        AbortController: "readonly",
+        AbortSignal: "readonly",
         Blob: "readonly",
         CustomEvent: "readonly",
         customElements: "readonly",
