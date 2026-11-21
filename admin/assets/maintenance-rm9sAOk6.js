@@ -1,1 +1,0 @@
-import{c as e,f as t}from"./http-D1H0xCbr.js";var n=()=>e(`/admin/stats`),r=e=>t(`/admin/contest/start-at`,e),i=()=>t(`/admin/maintenance/settle-tips`),a=e=>t(`/admin/maintenance/recheck-milestones`,e);export{i,a as n,r,n as t};
